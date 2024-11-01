@@ -48,15 +48,17 @@ model ManualStep {
 
   manual      Manual      @relation(fields: [manual_id], references: [id], onDelete: Cascade)
   image       StepImage?  @relation(fields: [image_id], references: [id], onDelete: SetNull)
+  feedback    ManualFeedback[] // Relation with ManualFeedback
 }
 
 // 4. Manual_Feedback Table
 model ManualFeedback {
-  id         BigInt      @id @default(autoincrement())
-  manual_id  BigInt
-  comment    String
-  image_url  String?
-  created_at DateTime     @default(now())
+  id           BigInt      @id @default(autoincrement())
+  manual_id    BigInt
+  manualStepId BigInt      // New field to reference ManualStep
+  image_url    String?
+  created_at   DateTime     @default(now())
 
-  manual     Manual       @relation(fields: [manual_id], references: [id], onDelete: Cascade)
+  manual       Manual       @relation(fields: [manual_id], references: [id], onDelete: Cascade)
+  manualStep   ManualStep   @relation(fields: [manualStepId], references: [id], onDelete: Cascade) // Relation with ManualStep
 }
