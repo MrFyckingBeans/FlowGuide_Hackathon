@@ -1,3 +1,5 @@
+'use client';
+
 import { useSearchParams } from 'next/navigation';
 
 export default function ManualView({ params }: { params: { manualID: string } }) {

@@ -1,4 +1,6 @@
 // src/app/[manualID]/help/page.tsx
+'use client';
+
 export default function ManualHelp({ params }: { params: { manualID: string } }) {
     return (
       <div>

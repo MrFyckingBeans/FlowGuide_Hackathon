@@ -1,4 +1,6 @@
 // src/app/create/page.tsx
+'use client';
+
 export default function CreateManual() {
     return (
       <div>

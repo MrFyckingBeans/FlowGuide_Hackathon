@@ -1,4 +1,6 @@
 // src/app/[manualID]/edit/page.tsx
+'use client';
+
 export default function ManualEdit({ params }: { params: { manualID: string } }) {
     return (
       <div>

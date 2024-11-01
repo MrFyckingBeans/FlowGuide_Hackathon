@@ -1,4 +1,6 @@
 // src/app/[manualID]/report/page.tsx
+'use client';
+
 export default function ManualReport({ params }: { params: { manualID: string } }) {
     return (
       <div>
