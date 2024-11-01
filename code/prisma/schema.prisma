@@ -11,4 +11,52 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+
+// 1. Manuals Table
+model Manual {
+  id         BigInt       @id @default(autoincrement())
+  title      String
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+
+  steps      ManualStep[]
+  images     StepImage[]
+  feedback   ManualFeedback[]
+}
+
+// 2. Step_Images Table
+model StepImage {
+  id        BigInt       @id @default(autoincrement())
+  manual_id BigInt
+  image_url String
+
+  manual    Manual       @relation(fields: [manual_id], references: [id], onDelete: Cascade)
+  steps     ManualStep[]
+}
+
+// 3. Manual_Steps Table
+model ManualStep {
+  id          BigInt      @id @default(autoincrement())
+  step_number Int
+  description String
+  manual_id   BigInt
+  image_id    BigInt?
+
+  manual      Manual      @relation(fields: [manual_id], references: [id], onDelete: Cascade)
+  image       StepImage?  @relation(fields: [image_id], references: [id], onDelete: SetNull)
+}
+
+// 4. Manual_Feedback Table
+model ManualFeedback {
+  id         BigInt      @id @default(autoincrement())
+  manual_id  BigInt
+  comment    String
+  image_url  String?
+  created_at DateTime     @default(now())
+
+  manual     Manual       @relation(fields: [manual_id], references: [id], onDelete: Cascade)
 }
