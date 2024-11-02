@@ -42,11 +42,14 @@ export default function Component({
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1)
     }
+    router.push(`/`)
   }
 
   const goToPreviousStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
+    } else {
+      router.push(`/`)
     }
   }
 
@@ -54,12 +57,10 @@ export default function Component({
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-grow flex flex-col items-center justify-between p-4 sm:py-8 max-w-lg mx-auto w-full">
         <div className="w-full space-y-6">
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg">
-            <Image
+          <div className="relative w-full rounded-lg overflow-hidden shadow-lg">
+            <img
               src={steps[currentStep - 1].imageUrl}
               alt={`Step ${currentStep} illustration`}
-              layout="fill"
-              objectFit="cover"
             />
           </div>
           <div className="space-y-4">
@@ -70,15 +71,15 @@ export default function Component({
         <div className="w-full space-y-4 mt-8">
 
           <div className="flex justify-between items-center">
-            <Button variant="outline" onClick={goToPreviousStep} disabled={currentStep === 1} size="lg">
+            <Button variant="outline" onClick={goToPreviousStep} size="lg">
               Back
             </Button>
-            <Button onClick={goToNextStep} disabled={currentStep === totalSteps} size="lg">
+            <Button onClick={goToNextStep} size="lg">
               {currentStep === totalSteps ? "Finish" : "Next"}
             </Button>
           </div>
           <div className="text-center text-muted-foreground underline">
-            <Link href={`${pathname}/help?step=${currentStep}&next=${steps.length > currentStep ? currentStep + 1 : currentStep}&progress=${currentStep / totalSteps * 100}`}>
+            <Link href={`${pathname}/help?step=${currentStep}&next=${steps.length > currentStep ? currentStep + 1 : currentStep}`}>
               I'm Lost, help me!
             </Link>
           </div>

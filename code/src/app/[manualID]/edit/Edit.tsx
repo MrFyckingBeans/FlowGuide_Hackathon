@@ -5,6 +5,8 @@ import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import RichTextEditor from "./RichTextEditor"
+import { ChevronLeft } from "lucide-react"
+import Link from "next/link"
 
 
 interface Step {
@@ -61,12 +63,10 @@ export default function Edit({
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-grow flex flex-col items-center justify-between p-4 sm:py-8 max-w-lg mx-auto w-full">
         <div className="w-full space-y-6">
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg">
-            <Image
+          <div className="relative w-full rounded-lg overflow-hidden shadow-lg">
+            <img
               src={steps[currentStep - 1].imageUrl}
               alt={`Step ${currentStep} illustration`}
-              layout="fill"
-              objectFit="cover"
             />
           </div>
           <div className="space-y-4">
@@ -84,12 +84,12 @@ export default function Edit({
               {currentStep === totalSteps ? "Finish" : "Next"}
             </Button>
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
-            <div
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-in-out"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-            ></div>
-          </div>
+          <Link href={`/`}>
+            <Button variant="outline" className="w-full mt-4">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back to Overview
+            </Button>
+          </Link>
         </div>
       </main>
     </div>

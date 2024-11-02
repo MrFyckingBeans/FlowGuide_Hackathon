@@ -1,7 +1,7 @@
 // src/services/manualService.ts
 
 import { PrismaClient } from '@prisma/client';
-import { Manual, ManualWithImages } from '@/types';
+import { Manual, Step, ManualWithImages } from '@/types';
 
 const prisma = new PrismaClient();
 
@@ -50,6 +50,20 @@ export async function fetchManualWithSteps(manualID: string) {
   });
 }
 
+export async function fetchManualWithStepsWithReports(manualID: string) {
+  return await prisma.manual.findUnique({
+    where: { id: parseInt(manualID) },
+    include: {
+      steps: {
+        include: {
+          image: true,
+          feedback: true,
+        },
+      },
+    },
+  });
+}
+
 export async function updateStep(description: string, stepId: number) {
   console.log(description, stepId)
   await prisma.manualStep.update({
@@ -88,6 +102,22 @@ export async function fetchAllManuals(): Promise<ManualWithImages[]> {
   } catch (error) {
     console.error("Error fetching manuals:", error);
     throw error;
+  }
+}
+
+
+export async function deleteStep(stepId: number) {
+  await prisma.manualStep.delete({
+    where: { id: stepId }
+  });
+}
+
+export async function reorderSteps(newSteps: Step[]) {
+  for (const step of newSteps) {
+    await prisma.manualStep.update({
+      where: { id: step.id },
+      data: { step_number: step.step_number }
+    });
   }
 }
 

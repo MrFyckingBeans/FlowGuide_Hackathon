@@ -6,6 +6,7 @@ export interface Manual {
     description: string;  // Add description field
     created_at: Date;     // Set to Date to match Prisma output
     updated_at: Date;     // Set to Date to match Prisma output
+    steps?: Step[];
 }
 
 // New ManualWithImages type
@@ -19,3 +20,20 @@ export interface Report {
   reportCount: number;  // Count of feedback reports for the manual
 }
   
+export interface Step {
+  id: number;
+  step_number: number;
+  description: string;
+  image?: Image;
+  feedback?: Feedback[];
+}
+
+export interface Image {
+  id: string;
+  image_url: string;
+}
+
+export interface Feedback {
+  id: number;
+  image_url: string;
+}
