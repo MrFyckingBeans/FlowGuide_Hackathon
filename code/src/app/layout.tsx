@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -24,14 +24,14 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-        <div className="fixed bottom-0 left-0 w-full h-[30vh] bg-gradient-to-t from-blue-200/50 to-transparent -z-10" />
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                <NuqsAdapter>
+                    {children}
+                    <div className="fixed bottom-0 left-0 w-full h-[30vh] bg-gradient-to-t from-blue-200/50 to-transparent -z-10" />
+                </NuqsAdapter>
+            </body>
+        </html>
+    );
 }
