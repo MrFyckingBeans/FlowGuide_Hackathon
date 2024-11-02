@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Calendar, MoreVertical, Edit2, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
+import { useRouter } from "next/navigation"; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ManualWithImages } from "@/types";
@@ -17,6 +18,8 @@ export default function ManualsOverview() {
     const [manuals, setManuals] = useState<ManualWithImages[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const router = useRouter(); // Initialize useRouter
 
     useEffect(() => {
         async function fetchManuals() {
@@ -51,6 +54,11 @@ export default function ManualsOverview() {
         }
     }
 
+    // Function to handle the edit navigation
+    const handleEditClick = (manualId: string) => {
+        router.push(`/${manualId}/edit`); // Navigate to the edit page
+    };
+
     return (
         <div className="container mx-auto p-2 pt-4 min-h-screen flex flex-col max-w-3xl">
             <Logo />
@@ -76,7 +84,7 @@ export default function ManualsOverview() {
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => console.log(`Edit manual ${manual.id}`)}>
+                                            <DropdownMenuItem onClick={() => handleEditClick(manual.id)}>
                                                 <Edit2 className="mr-2 h-4 w-4 text-blue-500" /> Edit
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleDelete(manual.id)} className="text-red-500">
