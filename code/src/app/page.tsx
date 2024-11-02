@@ -155,7 +155,7 @@ export default function Page() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-center">
+      <div className="mt-auto flex justify-center">
         <Link href="/create" className="w-full max-w-md">
           <Button size="lg" className="w-full bg-blue-500 hover:bg-blue-600">
             Create Manual
