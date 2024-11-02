@@ -10,8 +10,11 @@ import { useQueryState, parseAsInteger } from "nuqs";
 
 export default function Component() {
     const [step, setStep] = useQueryState("step", parseAsInteger.withDefault(0));
+    const [deviceName, setDeviceName] = useState(""); // New state for device name
+    const [description, setDescription] = useState(""); // New state for description
     const [images, setImages] = useState<{ name: string; src: string; file?: File; url?: string }[]>([]);
     const [guideSteps, setGuideSteps] = useState<{ title: string; description: string; url: string }[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
@@ -47,6 +50,7 @@ export default function Component() {
     };
 
     const handelAiUpload = async () => {
+        setIsLoading(true);
         try {
             const formattedImages = images.map((image) => ({
                 name: image.name,
@@ -58,31 +62,37 @@ export default function Component() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ images: formattedImages }),
+                body: JSON.stringify({
+                    images: formattedImages,
+                }),
             });
 
             const uploadedImages = await uploadSupaBase.json();
             const imagesUrl = uploadedImages.map((image: { url: string }) => image.url);
-            console.log("Images URL:", imagesUrl);
             const response = await fetch("/api/getAiDescription", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ images: imagesUrl }),
+                body: JSON.stringify({
+                    NameOfDevice: deviceName, // Use state value
+                    Description: description, // Use state value
+                    images: imagesUrl,
+                }),
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("Generated guide:", data.stamps);
+                console.log("Generated guide:", data);
                 // router.push("/"); // Redirect or display the guide as needed
             } else {
                 console.error("Error generating guide:", response.statusText);
             }
         } catch (error) {
             console.error("Error calling generateGuide API:", error);
+        } finally {
+            setIsLoading(false);
         }
-        return guideSteps;
     };
 
     return (
@@ -101,6 +111,8 @@ export default function Component() {
                                     id="device-name"
                                     placeholder="Enter device name..."
                                     className="h-14 bg-gray-100 w-full border border-grey rounded-lg pl-2"
+                                    value={deviceName} // Bind state value
+                                    onChange={(e) => setDeviceName(e.target.value)} // Update state on change
                                     required
                                 />
                             </div>
@@ -111,6 +123,8 @@ export default function Component() {
                                     id="description"
                                     placeholder="Enter description..."
                                     className="h-14 bg-gray-100 w-full border border-grey rounded-lg pl-2"
+                                    value={description} // Bind state value
+                                    onChange={(e) => setDescription(e.target.value)} // Update state on change
                                     required
                                 />
                             </div>
@@ -155,7 +169,7 @@ export default function Component() {
                             {images.map((image, index) => (
                                 <div
                                     key={index}
-                                    className="border border-gray-300 p-2 rounded-lg max-w-xs flex justify-between items-center"
+                                    className="border border-gray-300 p-2 rounded-lg max-w-xs flex justify-between items-center mx-auto"
                                 >
                                     <p className="text-gray-700 truncate overflow-hidden">{image.name}</p>
                                     <Button
@@ -207,7 +221,10 @@ export default function Component() {
                     </div>
                 )}
 
-                <div className="fixed bottom-0 left-0 right-0 p-4">
+                <div
+                    className="fixed bottom-0 left-0 right-0 p-4
+                    bg-white shadow-lg"
+                >
                     <div className="container max-w-md flex justify-between gap-4">
                         <Button
                             onClick={() => setStep(Math.max(step - 1, 0))}
@@ -216,8 +233,19 @@ export default function Component() {
                             Back
                         </Button>
                         {step === 1 ? (
-                            <Button onClick={handelAiUpload} className="h-10 w-1/2 bg-blue-500 text-white rounded-lg">
-                                Generate Guide
+                            <Button
+                                onClick={handelAiUpload}
+                                className="h-10 w-1/2 bg-blue-500 text-white rounded-lg flex items-center justify-center"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <div className="flex items-center">
+                                        <div className="w-5 h-5 border-4 border-t-white border-blue-300 rounded-full animate-spin mr-2"></div>{" "}
+                                        Generating...
+                                    </div>
+                                ) : (
+                                    "Generate Guide"
+                                )}
                             </Button>
                         ) : (
                             <Button

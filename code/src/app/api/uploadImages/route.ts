@@ -11,7 +11,6 @@ interface ImageData {
 }
 export async function POST(req: Request) {
     try {
-        console.log("Processing POST request");
         
         const { images } = await req.json();
         const uploadPromises = images.map((image: { name: string; fileData: string }, index: number) => {
@@ -40,7 +39,6 @@ export async function POST(req: Request) {
 
         return NextResponse.json(uploadedImages);
     } catch (error: any) {
-        console.error("Error in POST handler:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
