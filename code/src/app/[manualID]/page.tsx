@@ -3,6 +3,10 @@ import UserGuide from "./UserGuide";
 
 export default async function ManualView({ params }: { params: { manualID: string } }) {
 
+  // check if the manual id is a number
+  if (isNaN(Number(params.manualID))) {
+    return <div>Invalid manual ID</div>
+  }
 
   const manual = await fetchManualWithSteps(params.manualID);
 
@@ -22,7 +26,6 @@ export default async function ManualView({ params }: { params: { manualID: strin
 
   return (
     <div>
-      <h1>Manual ID: {params.manualID}</h1>
       <UserGuide steps={stepsArray} />
     </div>
   );

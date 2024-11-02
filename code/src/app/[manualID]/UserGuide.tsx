@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface Step {
   description: string
@@ -12,7 +13,6 @@ interface Step {
 
 interface UserGuideViewProps {
   steps?: Step[]
-  onLost?: () => void
 }
 
 export default function Component({
@@ -21,9 +21,9 @@ export default function Component({
     { description: "This is step 2", imageUrl: "/placeholder.svg?height=400&width=800" },
     { description: "This is step 3", imageUrl: "/placeholder.svg?height=400&width=800" },
   ],
-  onLost = () => console.log("I'm Lost clicked")
 }: UserGuideViewProps) {
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   const router = useRouter()
   const totalSteps = steps.length
 
@@ -51,7 +51,7 @@ export default function Component({
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <main className="flex-grow flex flex-col items-center justify-between p-4 sm:p-8 max-w-2xl mx-auto w-full">
+      <main className="flex-grow flex flex-col items-center justify-between p-4 sm:py-8 max-w-lg mx-auto w-full">
         <div className="w-full space-y-6">
           <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg">
             <Image
@@ -67,22 +67,25 @@ export default function Component({
           </div>
         </div>
         <div className="w-full space-y-4 mt-8">
-          <div className="w-full bg-muted rounded-full h-2.5">
-            <div
-              className="bg-primary h-2.5 rounded-full transition-all duration-300 ease-in-out"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-            ></div>
-          </div>
+
           <div className="flex justify-between items-center">
-            <Button variant="outline" onClick={goToPreviousStep} disabled={currentStep === 1}>
+            <Button variant="outline" onClick={goToPreviousStep} disabled={currentStep === 1} size="lg">
               Back
             </Button>
-            <Button variant="outline" onClick={onLost}>
-              I'm Lost
-            </Button>
-            <Button onClick={goToNextStep} disabled={currentStep === totalSteps}>
+            <Button onClick={goToNextStep} disabled={currentStep === totalSteps} size="lg">
               {currentStep === totalSteps ? "Finish" : "Next"}
             </Button>
+          </div>
+          <div className="text-center text-muted-foreground underline">
+            <Link href={`${pathname}/help?step=${currentStep}&next=${steps.length > currentStep ? currentStep + 1 : currentStep}&progress=${currentStep / totalSteps * 100}`}>
+              I'm Lost, help me!
+            </Link>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2">
+            <div
+              className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-in-out"
+              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+            ></div>
           </div>
         </div>
       </main>
