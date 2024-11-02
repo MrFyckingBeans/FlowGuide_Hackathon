@@ -8,12 +8,18 @@ import { Camera, Trash, Upload } from "lucide-react"
 import { usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function Help({ uploadImage }: { uploadImage: (formData: FormData) => Promise<void> }) {
+export default function Help({ uploadImage }: { uploadImage: (formData: FormData) => Promise<string> }) {
+    const [messages, setMessages] = useState([
+        {
+            role: 'assistant',
+            content: "Hi there, I'm here to save you from endless headaches. How can I help?"
+        }
+    ])
+
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
-
 
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +36,7 @@ export default function Help({ uploadImage }: { uploadImage: (formData: FormData
             });
 
             Promise.any(newImages).then((result) => {
-                handleUploadImage(result.file)
+                handleUploadImage(result.file);
             });
         }
     };
@@ -49,15 +55,11 @@ export default function Help({ uploadImage }: { uploadImage: (formData: FormData
     const handleUploadImage = async (file: File) => {
         const formData = new FormData();
         formData.append("file", file);
-        await uploadImage(formData)
+        const text = await uploadImage(formData)
+        setMessages([...messages, { role: 'assistant', content: text }])
     }
 
-    const [messages, setMessages] = useState([
-        {
-            role: 'assistant',
-            content: "Hi there, I'm here to save you from endless headaches. How can I help?"
-        }
-    ])
+
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
