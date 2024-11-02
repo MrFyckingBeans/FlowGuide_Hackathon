@@ -1,12 +1,12 @@
 // src/types/index.ts
 
 export interface Manual {
-    id: string;
-    title: string;
-    description: string;  // Add description field
-    created_at: Date;     // Set to Date to match Prisma output
-    updated_at: Date;     // Set to Date to match Prisma output
-    steps?: Step[];
+  id: string;
+  title: string;
+  description: string;  // Add description field
+  created_at: Date;     // Set to Date to match Prisma output
+  updated_at: Date;     // Set to Date to match Prisma output
+  steps?: Step[];
 }
 
 // Updated ManualWithImages type
@@ -20,7 +20,7 @@ export interface Report {
   name: string;         // Manual title
   reportCount: number;  // Count of feedback reports for the manual
 }
-  
+
 export interface Step {
   id: number;
   step_number: number;
@@ -36,5 +36,7 @@ export interface Image {
 
 export interface Feedback {
   id: number;
+  manualStepId: number;
+  manual_id: string;
   image_url: string;
 }
