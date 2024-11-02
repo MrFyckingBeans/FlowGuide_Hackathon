@@ -4,29 +4,23 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Calendar } from "lucide-react"
 import Image from "next/image"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Manual } from "@/types" // Import the Manual type
-
-interface Report {
-  id: string
-  name: string
-  reportCount: number
-}
+import { Manual, Report } from "@/types"
 
 export default function Page() {
-  const [manuals, setManuals] = useState<Manual[]>([])
+  const [manuals, setManuals] = useState<Manual[] | null>(null); // Set null initially
   const [error, setError] = useState<string | null>(null)
 
-  const [reports, setReports] = useState<Report[]>([]);
+  const [reports, setReports] = useState<Report[] | null>(null); // Set null initially
   const [reportError, setReportError] = useState<string | null>(null);
-
 
   useEffect(() => {
     async function loadLatestManuals() {
       try {
-        const response = await fetch("/api/manuals"); // Use the API route
+        const response = await fetch("/api/manuals");
         if (!response.ok) throw new Error("Failed to load manuals");
 
         const data = await response.json();
@@ -39,7 +33,6 @@ export default function Page() {
 
     loadLatestManuals();
   }, []);
-
 
   useEffect(() => {
     async function loadReports() {
@@ -57,7 +50,6 @@ export default function Page() {
 
     loadReports();
   }, []);
-
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -79,7 +71,18 @@ export default function Page() {
           </Link>
         </CardHeader>
         <CardContent className="grid gap-4">
-          {reportError ? (
+          {reports === null ? (
+            // Skeleton Structure for Reports
+            Array(1).fill(0).map((_, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
+              >
+                <Skeleton className="w-1/2 h-4 rounded" />
+                <Skeleton className="w-1/4 h-4 rounded" />
+              </div>
+            ))
+          ) : reportError ? (
             <p className="text-red-500">{reportError}</p>
           ) : (
             reports.map((report) => (
@@ -103,8 +106,6 @@ export default function Page() {
             ))
           )}
         </CardContent>
-
-
       </Card>
 
       <Card>
@@ -115,13 +116,28 @@ export default function Page() {
           </Link>
         </CardHeader>
         <CardContent className="grid gap-4">
-          {error ? (
+          {manuals === null ? (
+            // Skeleton Structure for Manuals
+            Array(1).fill(0).map((_, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col gap-2 p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
+              >
+                <Skeleton className="w-2/3 h-5 rounded" />
+                <Skeleton className="w-full h-4 rounded" />
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Skeleton className="w-1/3 h-4 rounded" />
+                </div>
+              </div>
+            ))
+          ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (
             manuals.map((manual) => (
               <Link href={`/${manual.id.toString()}`} key={manual.id.toString()}>
                 <div
-                  key={manual.id.toString()} // Convert BigInt to string for React key
+                  key={manual.id.toString()}
                   className="flex flex-col gap-2 p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
                 >
                   <h3 className="font-medium">{manual.title}</h3>
@@ -140,10 +156,12 @@ export default function Page() {
       </Card>
 
       <div className="flex justify-center">
-        <Button size="lg" className="w-full max-w-md bg-blue-500 hover:bg-blue-600">
-          Create Manual
-        </Button>
+        <Link href="/create" className="w-full max-w-md">
+          <Button size="lg" className="w-full bg-blue-500 hover:bg-blue-600">
+            Create Manual
+          </Button>
+        </Link>
       </div>
     </div>
-  )
+  );
 }
