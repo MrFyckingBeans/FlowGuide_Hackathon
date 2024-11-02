@@ -1,14 +1,14 @@
 // src/app/[manualID]/help/page.tsx
 
 import Help from "./Help";
-import { generateTextFromImage, pushImageToBucket } from "./helper";
+import { generateTextFromImage, generateTextFromMessages, pushImageToBucket } from "./helper";
 
 export default async function ManualHelp({ params }: { params: { manualID: string } }) {
 
 
 
 
-  const uploadImage = async (formData: FormData): Promise<string> => {
+  const uploadImage = async (formData: FormData): Promise<{ text: string, url: string }> => {
     "use server"
 
     console.log("uploadImage")
@@ -17,11 +17,16 @@ export default async function ManualHelp({ params }: { params: { manualID: strin
     console.log(url)
     const text = await generateTextFromImage(url)
     console.log(text)
-    return text;
+    return { text: text, url: url };
+  }
 
+  const uploadText = async (messages: { role: string, content: string }[]): Promise<string> => {
+    "use server"
+    const text = await generateTextFromMessages(messages)
+    return text;
   }
 
   return (
-    <Help uploadImage={uploadImage} />
+    <Help uploadImage={uploadImage} uploadText={uploadText} />
   );
 }

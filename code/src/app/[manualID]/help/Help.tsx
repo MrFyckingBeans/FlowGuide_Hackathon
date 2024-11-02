@@ -4,17 +4,16 @@ import { useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Camera, Trash, Upload } from "lucide-react"
+import { Camera, LoaderCircle, Trash, Upload } from "lucide-react"
 import { usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function Help({ uploadImage }: { uploadImage: (formData: FormData) => Promise<string> }) {
-    const [messages, setMessages] = useState([
-        {
-            role: 'assistant',
-            content: "Hi there, I'm here to save you from endless headaches. How can I help?"
-        }
-    ])
+export default function Help({ uploadImage, uploadText }: { uploadImage: (formData: FormData) => Promise<{ text: string, url: string }>, uploadText: (messages: { role: string, content: string }[]) => Promise<string> }) {
+    const [picture, setPicture] = useState({ link: "", data: "" })
+    const [loading, setLoading] = useState(false)
+    const [messages, setMessages] = useState<{ role: string, content: string }[]>([])
+
+    console.log(picture)
 
     const pathname = usePathname()
     const searchParams = useSearchParams()
@@ -36,7 +35,7 @@ export default function Help({ uploadImage }: { uploadImage: (formData: FormData
             });
 
             Promise.any(newImages).then((result) => {
-                handleUploadImage(result.file);
+                handleUploadImage(result.file, result.src);
             });
         }
     };
@@ -46,30 +45,45 @@ export default function Help({ uploadImage }: { uploadImage: (formData: FormData
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
-                handleUploadImage(file)
+                handleUploadImage(file, reader.result as string)
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const handleUploadImage = async (file: File) => {
+    const handleUploadImage = async (file: File, pictureData: string) => {
+        setLoading(true)
         const formData = new FormData();
         formData.append("file", file);
-        const text = await uploadImage(formData)
-        setMessages([...messages, { role: 'assistant', content: text }])
+        const res = await uploadImage(formData)
+        setMessages([{ role: 'assistant', content: res.text }])
+        setPicture({ link: res.url, data: pictureData })
+        setLoading(false)
     }
 
 
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        setLoading(true)
         const form = e.currentTarget
         const input = form.elements.namedItem('message') as HTMLInputElement
         const message = input.value.trim()
 
+        const currentMessages = [...messages, { role: 'user', content: message }]
+
         if (message) {
-            setMessages([...messages, { role: 'user', content: message }])
+            setMessages(currentMessages)
             input.value = ''
+
+            let picturemessage = [{ role: "user", content: picture.link }]
+
+            Array.prototype.push.apply(picturemessage, currentMessages)
+
+            uploadText(picturemessage).then((text) => {
+                setMessages([...currentMessages, { role: 'assistant', content: text }])
+                setLoading(false)
+            })
         }
     }
 
@@ -115,39 +129,46 @@ export default function Help({ uploadImage }: { uploadImage: (formData: FormData
                     Take Picture
                 </Button>
             </div>
-
-            <Card className="flex-1 p-4 mb-6 flex flex-col">
-                <div className="flex-1 overflow-y-auto mb-4">
-                    <div className="space-y-4">
-                        {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
+            {messages.length > 0 ?
+                <Card className="flex-1 p-4 mb-6 flex flex-col">
+                    <div className="flex-1 overflow-y-auto mb-4">
+                        <div className="space-y-4">
+                            {picture.data && <div className="flex justify-end"><div className="rounded-lg px-2 py-2 max-w-[80%] bg-blue-500"><img src={picture.link} className="rounded-md" alt="Uploaded Preview" /></div></div>}
+                            {messages.map((message, index) => (
                                 <div
-                                    className={`rounded-lg px-4 py-2 max-w-[80%] ${message.role === 'user'
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-muted'
-                                        }`}
+                                    key={index}
+                                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    {message.role === 'assistant' && (
-                                        <div className="font-semibold mb-1">Your saviour</div>
-                                    )}
-                                    {message.content}
+                                    <div
+                                        className={`rounded-lg px-4 py-2 max-w-[80%] ${message.role === 'user'
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-muted'
+                                            }`}
+                                    >
+                                        {message.role === 'assistant' && (
+                                            <div className="font-semibold mb-1">Your sAIviour</div>
+                                        )}
+                                        {message.content}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                            {loading && <div className="flex justify-start"><div className="rounded-lg px-4 py-2 max-w-[80%] bg-muted">Loading...</div></div>}
+                        </div>
                     </div>
-                </div>
 
-                <form onSubmit={handleSubmit} className="relative mt-auto">
-                    <Input
-                        name="message"
-                        placeholder="Ask your question..."
-                        className="w-full"
-                    />
-                </form>
-            </Card>
+                    <form onSubmit={handleSubmit} className="relative mt-auto">
+                        <Input
+                            name="message"
+                            placeholder="Ask your question..."
+                            className="w-full"
+                        />
+                    </form>
+                </Card>
+                :
+                <div className="flex-1 p-4 mb-6 flex flex-col">
+                    {loading && <LoaderCircle className="animate-spin" />}
+                </div>
+            }
 
             <div className="flex justify-between mb-4">
                 <Link href={`${pathname?.split('/').slice(0, -1).join('/')}?step=${searchParams?.get('step')}`}><Button variant="outline" size="lg">Back</Button></Link>

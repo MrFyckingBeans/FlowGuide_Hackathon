@@ -46,3 +46,43 @@ export const generateTextFromImage = async (url: string) => {
 
     return result.text;
 }
+
+
+export const generateTextFromMessages = async (messages: { role: string, content: string }[]) => {
+
+    const initialMessages = [
+        {
+            role: 'user',
+            content: [
+                {
+                    type: 'text',
+                    text: 'Please provide troubleshooting steps for this image (no more than 3 sentences)',
+                },
+                {
+                    type: 'image',
+                    image: new URL(messages[0].content),
+                },
+            ],
+        },
+    ]
+
+    Array.prototype.push.apply(initialMessages, messages.map((message) => ({
+        role: message.role,
+        content: [
+            {
+                type: 'text',
+                text: message.content,
+            }
+        ],
+    })).slice(1))
+
+    console.log(initialMessages)
+
+    const result = await generateText({
+        model: openai('gpt-4-turbo'),
+        maxTokens: 512,
+        messages: initialMessages as any,
+    });
+    return result.text;
+}
+
