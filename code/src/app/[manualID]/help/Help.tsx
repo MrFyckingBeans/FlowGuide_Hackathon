@@ -1,18 +1,56 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Camera, Upload } from "lucide-react"
+import { Camera, Trash, Upload } from "lucide-react"
 import { usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function Help() {
+export default function Help({ uploadImage }: { uploadImage: (formData: FormData) => Promise<void> }) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
 
 
+
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = event.target;
+        if (files) {
+            const newImages = Array.from(files).map((file) => {
+                return new Promise<{ name: string; src: string; file: File }>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        resolve({ name: file.name, src: reader.result as string, file });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            Promise.any(newImages).then((result) => {
+                handleUploadImage(result.file)
+            });
+        }
+    };
+
+    const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                handleUploadImage(file)
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleUploadImage = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        await uploadImage(formData)
+    }
 
     const [messages, setMessages] = useState([
         {
@@ -47,11 +85,30 @@ export default function Help() {
             </div>
 
             <div className="space-y-3 mb-6">
-                <Button className="w-full bg-blue-500 hover:bg-blue-600" size="lg">
+                <input
+                    type="file"
+                    accept="image/*"
+                    multiple // Allow multiple files to be selected
+                    onChange={handleFileUpload}
+                    ref={fileInputRef}
+                    className="hidden"
+                />
+                <Button className="w-full bg-blue-500 hover:bg-blue-600" size="lg" onClick={() => fileInputRef.current?.click()}>
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload Image
+                    Upload Images
                 </Button>
-                <Button className="w-full bg-blue-500 hover:bg-blue-600" size="lg">
+                <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleCameraCapture}
+                    ref={cameraInputRef}
+                    className="hidden"
+                />
+                <Button
+                    className="w-full bg-blue-500 hover:bg-blue-600" size="lg"
+                    onClick={() => cameraInputRef.current?.click()}
+                >
                     <Camera className="mr-2 h-4 w-4" />
                     Take Picture
                 </Button>
