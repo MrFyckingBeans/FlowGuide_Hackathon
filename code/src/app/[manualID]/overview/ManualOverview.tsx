@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Manual, Step } from "@/types"
-import { Pencil, Trash2, AlertCircle, ChevronLeft } from "lucide-react"
+import { Trash2, AlertCircle, ChevronLeft, Edit2 } from "lucide-react"
 import Link from "next/link"
 import { Reorder } from "framer-motion"
 import { useState } from "react"
@@ -25,7 +25,7 @@ export default function ManualOverview({ manual, deleteStep, reorderStepsInDb }:
     }
 
     return (
-        <div className="container max-w-xl mx-auto p-4 space-y-6">
+        <div className="container max-w-3xl mx-auto p-4 space-y-6">
             <div className="space-y-2">
                 <h1 className="text-2xl font-bold">{manual.title}</h1>
                 <p className="text-muted-foreground">
@@ -33,66 +33,70 @@ export default function ManualOverview({ manual, deleteStep, reorderStepsInDb }:
                 </p>
             </div>
 
-            <div className="space-y-4">
-                <Reorder.Group axis="y" values={steps} onReorder={reorderSteps} className="list-none">
-                    {steps.map((step) => (
-                        <Reorder.Item key={step.id} value={step} className="mb-2">
-                            <Card key={step.step_number} className="overflow-hidden">
-                                <CardContent className="p-0 flex flex-col flex-row">
-                                    <div className="relative w-full !w-1/4">
+            <Reorder.Group axis="y" values={steps} onReorder={reorderSteps} className="space-y-4">
+                {steps.map((step) => (
+                    <Reorder.Item key={step.id} value={step}>
+                        <Card className="overflow-hidden">
+                            <CardContent className="p-0">
+                                <div className="flex">
+                                    <div className="w-1/3 relative">
                                         <Link href={`/${manual.id}?step=${step.step_number}`}>
                                             <img
-                                                src={step.image?.image_url}
+                                                src={step.image?.image_url || '/placeholder.svg'}
                                                 alt={`Step ${step.step_number}`}
-                                                className="h-full object-cover"
+                                                className="h-full w-full object-cover"
                                             />
                                         </Link>
                                     </div>
-                                    <div className="w-full !w-2/3 p-4 flex flex-col justify-between">
-                                        <Link href={`/${manual.id}?step=${step.step_number}`} className="w-fit">
-                                            <h2 className="text-3xl font-bold hover:underline text-blue-500 w-fit">Step {step.step_number}</h2>
-                                        </Link>
-                                        <p className="text-sm text-muted-foreground limited-text">
+                                    <div className="w-2/3 p-4 flex flex-col">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <Link href={`/${manual.id}?step=${step.step_number}`} className="group">
+                                                <h2 className="text-2xl font-bold text-blue-500 group-hover:underline">Step {step.step_number}</h2>
+                                            </Link>
+
+                                        </div>
+                                        <p className="text-sm text-muted-foreground mb-4 flex-grow">
                                             {removeHtmlTags(step.description)}
                                         </p>
-                                        <div className="flex justify-between items-center mb-4 sm:mb-0">
-                                            <div className={`flex items-center ${step.feedback?.length || 0 > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                                        <div className={`flex items-center justify-between ${step.feedback?.length ? 'text-red-500' : 'text-muted-foreground'}`}>
+                                            {/* Alert Circle and Feedback Count */}
+                                            <div className="flex items-center">
                                                 <AlertCircle className="w-4 h-4 mr-1" />
-                                                <span>{step.feedback?.length || 0} {(step.feedback?.length || 0) === 1 ? 'issue' : 'issues'}</span>
+                                                <span>{step.feedback?.length || 0} {step.feedback?.length === 1 ? 'issue' : 'issues'}</span>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <Link href={`/${manual.id}/edit?step=${step.step_number}`}>
-                                                    <Button variant="ghost" size="icon">
-                                                        <Pencil className="w-4 h-4" />
-                                                        <span className="sr-only">Edit step</span>
-                                                    </Button>
-                                                </Link>
 
-                                                <Button variant="ghost" size="icon" onClick={() => {
-                                                    deleteStep(step.id)
-                                                }}>
-                                                    <Trash2 className="w-4 h-4" />
+                                            {/* Edit and Delete Buttons */}
+                                            <div className="flex gap-2">
+                                                <Button variant="ghost" size="sm" asChild>
+                                                    <Link href={`/${manual.id}/edit?step=${step.step_number}`}>
+                                                        <Edit2 className="h-4 w-4 text-blue-500" />
+                                                        <span className="sr-only">Edit step</span>
+                                                    </Link>
+                                                </Button>
+                                                <Button variant="ghost" size="sm" onClick={() => deleteStep(step.id)}>
+                                                    <Trash2 className="h-4 w-4 text-red-500" />
                                                     <span className="sr-only">Delete step</span>
                                                 </Button>
                                             </div>
                                         </div>
 
                                     </div>
-                                </CardContent>
-                            </Card>
-                        </Reorder.Item>
-                    ))}
-                </Reorder.Group>
-            </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Reorder.Item>
+                ))}
+            </Reorder.Group>
 
-            <Link href={`/`}>
-                <Button variant="outline" className="w-full mt-4">
+            <Button variant="outline" className="w-full" asChild>
+                <Link href="/">
                     <ChevronLeft className="w-4 h-4 mr-2" />
                     Back to Overview
-                </Button>
-            </Link>
+                </Link>
+            </Button>
         </div>
     )
+
 }
 
 function removeHtmlTags(input: string) {
