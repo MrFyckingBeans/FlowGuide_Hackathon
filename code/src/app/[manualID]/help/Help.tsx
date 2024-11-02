@@ -165,8 +165,8 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
                     </form>
                 </Card>
                 :
-                <div className="flex-1 p-4 mb-6 flex flex-col">
-                    {loading && <LoaderCircle className="animate-spin" />}
+                <div className="flex-1 p-4 mb-6 flex flex-col items-center">
+                    {loading && <LoaderCircle className="animate-spin text-blue-500" size={48} />}
                 </div>
             }
 

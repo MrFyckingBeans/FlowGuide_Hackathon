@@ -15,14 +15,14 @@ export default async function ManualHelp({ params }: { params: { manualID: strin
     const file = formData.get("file") as File;
     const url = await pushImageToBucket(file)
     console.log(url)
-    const text = await generateTextFromImage(url)
+    const text = await generateTextFromImage(url, params.manualID)
     console.log(text)
     return { text: text, url: url };
   }
 
   const uploadText = async (messages: { role: string, content: string }[]): Promise<string> => {
     "use server"
-    const text = await generateTextFromMessages(messages)
+    const text = await generateTextFromMessages(messages, params.manualID)
     return text;
   }
 
