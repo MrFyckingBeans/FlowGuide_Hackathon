@@ -1,9 +1,8 @@
 // src/services/manualService.ts
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { Manual, Step, ManualWithImages } from '@/types';
 
-const prisma = new PrismaClient();
 
 export async function fetchLatestManuals(limit: number = 5): Promise<Manual[]> {
   try {

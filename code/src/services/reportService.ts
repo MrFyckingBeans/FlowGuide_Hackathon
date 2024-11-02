@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { Report } from '@/types';
-
-const prisma = new PrismaClient();
 
 export async function fetchReportCounts(): Promise<Report[]> {
   try {
