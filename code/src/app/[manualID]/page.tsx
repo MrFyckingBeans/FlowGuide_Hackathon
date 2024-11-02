@@ -1,16 +1,39 @@
-'use client';
+import { PrismaClient } from "@prisma/client";
+import UserGuide from "./UserGuide";
 
-import { useSearchParams } from 'next/navigation';
+export default async function ManualView({ params }: { params: { manualID: string } }) {
+  const prisma = new PrismaClient()
 
-export default function ManualView({ params }: { params: { manualID: string } }) {
-  const searchParams = useSearchParams();
-  const stepID = searchParams.get('stepID');
+
+  const manual = await prisma.manual.findUnique({
+    where: {
+      id: parseInt(params.manualID),
+    },
+    include: {
+      steps: {
+        include: {
+          image: true, 
+        },
+      },
+    },
+  });
+  
+  const stepsArray = manual.steps.map((step:any) => {
+    return {
+      description: step.description,
+      imageUrl: step.image ? step.image.image_url : null,
+    };
+  });
+
+  if (!manual) {
+    return <div>Manual not found</div>
+  }
+
 
   return (
     <div>
       <h1>Manual ID: {params.manualID}</h1>
-      <h2>Step ID: {stepID}</h2>
-      <p>This is the content for step {stepID} of manual {params.manualID}.</p>
+      <UserGuide steps={stepsArray}/>
     </div>
   );
 }
