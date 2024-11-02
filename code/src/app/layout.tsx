@@ -29,6 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <div className="absolute bottom-0 left-0 w-full h-[30vh] bg-gradient-to-t from-blue-200/50 to-transparent -z-10" />
       </body>
     </html>
   );
