@@ -6,6 +6,11 @@ const prisma = new PrismaClient();
 export async function fetchReportCounts(): Promise<Report[]> {
   try {
     const reports = await prisma.manual.findMany({
+      where: {
+        feedback: {
+          some: {}, // Only include manuals that have at least one related feedback item
+        },
+      },
       select: {
         id: true,
         title: true,

@@ -1,7 +1,7 @@
 // src/services/manualService.ts
 
 import { PrismaClient } from '@prisma/client';
-import { Manual } from '@/types';
+import { Manual, ManualWithImages } from '@/types';
 
 const prisma = new PrismaClient();
 
@@ -57,3 +57,37 @@ export async function updateStep(description: string, stepId: number) {
     data: { description }
   });
 }
+
+
+// Adjust fetchAllManuals in manualService to provide correct types
+export async function fetchAllManuals(): Promise<ManualWithImages[]> {
+  try {
+    const manuals = await prisma.manual.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        created_at: true,
+        updated_at: true,
+        images: {
+          select: {
+            image_url: true,
+          },
+        },
+      },
+    });
+
+    return manuals.map(manual => ({
+      id: manual.id.toString(),
+      title: manual.title,
+      description: manual.description,
+      created_at: manual.created_at,
+      updated_at: manual.updated_at,
+      images: manual.images.map(image => image.image_url),
+    }));
+  } catch (error) {
+    console.error("Error fetching manuals:", error);
+    throw error;
+  }
+}
+

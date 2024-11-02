@@ -8,6 +8,11 @@ export interface Manual {
     updated_at: Date;     // Set to Date to match Prisma output
 }
 
+// New ManualWithImages type
+export interface ManualWithImages extends Manual {
+  images: string[];  // Array of image URLs
+}
+
 export interface Report {
   id: string;           // BigInt converted to string for JSON serialization
   name: string;         // Manual title
