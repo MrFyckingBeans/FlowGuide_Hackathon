@@ -1,7 +1,7 @@
 // src/services/manualService.ts
 
 import { PrismaClient } from '@prisma/client';
-import { Manual } from '@/types';
+import { Manual, Step } from '@/types';
 
 const prisma = new PrismaClient();
 
@@ -76,5 +76,14 @@ export async function deleteStep(stepId: number) {
   await prisma.manualStep.delete({
     where: { id: stepId }
   });
+}
+
+export async function reorderSteps(newSteps: Step[]) {
+  for (const step of newSteps) {
+    await prisma.manualStep.update({
+      where: { id: step.id },
+      data: { step_number: step.step_number }
+    });
+  }
 }
 
