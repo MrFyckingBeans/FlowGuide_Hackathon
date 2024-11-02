@@ -44,7 +44,7 @@ export default function ManualOverview({ manual, deleteStep, reorderStepsInDb }:
                                             <img
                                                 src={step.image?.image_url}
                                                 alt={`Step ${step.step_number}`}
-                                                className="w-full object-cover"
+                                                className="h-full object-cover"
                                             />
                                         </Link>
                                     </div>
