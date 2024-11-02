@@ -55,6 +55,7 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
         setLoading(true)
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("step", searchParams?.get('step') || "")
         const res = await uploadImage(formData)
         setMessages([{ role: 'assistant', content: res.text }])
         setPicture({ link: res.url, data: pictureData })

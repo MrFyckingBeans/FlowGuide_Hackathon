@@ -11,12 +11,10 @@ export default async function ManualHelp({ params }: { params: { manualID: strin
   const uploadImage = async (formData: FormData): Promise<{ text: string, url: string }> => {
     "use server"
 
-    console.log("uploadImage")
     const file = formData.get("file") as File;
     const url = await pushImageToBucket(file)
-    console.log(url)
     const text = await generateTextFromImage(url, params.manualID)
-    console.log(text)
+    console.log(url, params.manualID, parseInt(formData.get("step") as string))
     return { text: text, url: url };
   }
 
