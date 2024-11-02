@@ -83,3 +83,14 @@ export async function fetchAllManuals(): Promise<ManualWithImages[]> {
   }
 }
 
+
+export async function deleteManual(manualId: string): Promise<void> {
+  try {
+    await prisma.manual.delete({
+      where: { id: BigInt(manualId) }, // Convert manualId to BigInt
+    });
+  } catch (error) {
+    console.error("Error deleting manual:", error);
+    throw new Error("Failed to delete manual.");
+  }
+}

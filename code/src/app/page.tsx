@@ -53,7 +53,7 @@ export default function Page() {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-    
+
       <Logo />
 
       <Card>
@@ -65,7 +65,6 @@ export default function Page() {
         </CardHeader>
         <CardContent className="grid gap-4">
           {reports === null ? (
-            // Skeleton Structure for Reports
             Array(1).fill(0).map((_, idx) => (
               <div
                 key={idx}
@@ -81,24 +80,26 @@ export default function Page() {
             reports.map((report) => (
               <Link href={`/${report.id}/report`} key={report.id}>
                 <div className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:cursor-pointer">
-                  <span className="font-medium">{report.name}</span>
+                  <span className="font-medium text-sm">{report.name}</span> {/* Explicitly set text-sm here */}
                   <span
-                    className={`text-sm ${report.reportCount === 4
-                      ? "text-red-500"
-                      : report.reportCount === 3
-                        ? "text-orange-500"
-                        : report.reportCount === 2
-                          ? "text-yellow-500"
-                          : "text-green-500"
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${report.reportCount >= 4
+                        ? "bg-red-100 text-red-700"
+                        : report.reportCount === 3
+                          ? "bg-orange-100 text-orange-700"
+                          : report.reportCount === 2
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-green-100 text-green-700"
                       }`}
                   >
-                    {report.reportCount} Reports
+                    {report.reportCount} {report.reportCount === 1 ? "Report" : "Reports"}
                   </span>
                 </div>
               </Link>
             ))
           )}
         </CardContent>
+
+
       </Card>
 
       <Card>
@@ -148,7 +149,8 @@ export default function Page() {
         </CardContent>
       </Card>
 
-      <CreateManualButton />
+      <CreateManualButton className="mt-auto" />
+
     </div>
   );
 }

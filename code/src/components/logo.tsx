@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Logo() {
     return (
-        <Link href="/" className="flex justify-center mb-8">
+        <Link href="/" className="flex justify-center mb-8 mt-4">
             <Image
                 src="/assets/fg-logo.svg"
                 alt="FlowGuide Logo"
