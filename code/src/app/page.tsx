@@ -128,7 +128,7 @@ export default function Page() {
             <p className="text-red-500">{error}</p>
           ) : (
             manuals.map((manual) => (
-              <Link href={`/${manual.id.toString()}`} key={manual.id.toString()}>
+              <Link href={`/${manual.id.toString()}/overview`} key={manual.id.toString()}>
                 <div
                   key={manual.id.toString()}
                   className="flex flex-col gap-2 p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
