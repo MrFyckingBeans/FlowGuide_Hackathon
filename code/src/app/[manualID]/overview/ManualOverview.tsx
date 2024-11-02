@@ -38,8 +38,8 @@ export default function ManualOverview({ manual, deleteStep, reorderStepsInDb }:
                     {steps.map((step) => (
                         <Reorder.Item key={step.id} value={step} className="mb-2">
                             <Card key={step.step_number} className="overflow-hidden">
-                                <CardContent className="p-0 flex flex-col sm:flex-row">
-                                    <div className="relative w-full sm:w-1/4">
+                                <CardContent className="p-0 flex flex-col flex-row">
+                                    <div className="relative w-full !w-1/4">
                                         <Link href={`/${manual.id}?step=${step.step_number}`}>
                                             <img
                                                 src={step.image?.image_url}
@@ -48,7 +48,7 @@ export default function ManualOverview({ manual, deleteStep, reorderStepsInDb }:
                                             />
                                         </Link>
                                     </div>
-                                    <div className="w-full sm:w-2/3 p-4 flex flex-col justify-between">
+                                    <div className="w-full !w-2/3 p-4 flex flex-col justify-between">
                                         <Link href={`/${manual.id}?step=${step.step_number}`} className="w-fit">
                                             <h2 className="text-3xl font-bold hover:underline text-blue-500 w-fit">Step {step.step_number}</h2>
                                         </Link>

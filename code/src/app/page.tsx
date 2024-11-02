@@ -53,7 +53,7 @@ export default function Page() {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-    
+
       <Logo />
 
       <Card>
@@ -79,7 +79,7 @@ export default function Page() {
             <p className="text-red-500">{reportError}</p>
           ) : (
             reports.map((report) => (
-              <Link href={`/${report.id}/report`} key={report.id}>
+              <Link href={`/${report.id}/overview`} key={report.id}>
                 <div className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:cursor-pointer">
                   <span className="font-medium">{report.name}</span>
                   <span
@@ -128,7 +128,7 @@ export default function Page() {
             <p className="text-red-500">{error}</p>
           ) : (
             manuals.map((manual) => (
-              <Link href={`/${manual.id.toString()}/overview`} key={manual.id.toString()}>
+              <Link href={`/${manual.id.toString()}`} key={manual.id.toString()}>
                 <div
                   key={manual.id.toString()}
                   className="flex flex-col gap-2 p-4 rounded-lg border bg-card text-card-foreground shadow-sm"

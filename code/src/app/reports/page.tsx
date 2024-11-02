@@ -31,24 +31,26 @@ export default async function ReportsOverview() {
                         <div className="text-center text-red-500">{error}</div>
                     ) : reports.length > 0 ? (
                         reports.map((report) => (
-                            <div
-                                key={report.id}
-                                className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:bg-accent/50 transition-colors"
-                            >
-                                <span className="font-medium">{report.name}</span>
-                                <span
-                                    className={`px-3 py-1 rounded-full text-sm font-medium ${report.reportCount >= 4
+                            <Link href={`/${report.id.toString()}`} key={report.id.toString()}>
+                                <div
+                                    key={report.id}
+                                    className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:bg-accent/50 transition-colors"
+                                >
+                                    <span className="font-medium">{report.name}</span>
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-sm font-medium ${report.reportCount >= 4
                                             ? "bg-red-100 text-red-700"
                                             : report.reportCount === 3
                                                 ? "bg-orange-100 text-orange-700"
                                                 : report.reportCount === 2
                                                     ? "bg-yellow-100 text-yellow-700"
                                                     : "bg-green-100 text-green-700"
-                                        }`}
-                                >
-                                    {report.reportCount} {report.reportCount === 1 ? "Issue" : "Issues"}
-                                </span>
-                            </div>
+                                            }`}
+                                    >
+                                        {report.reportCount} {report.reportCount === 1 ? "Issue" : "Issues"}
+                                    </span>
+                                </div>
+                            </Link>
                         ))
                     ) : (
                         <div className="text-center text-muted-foreground">No issues reported.</div>
