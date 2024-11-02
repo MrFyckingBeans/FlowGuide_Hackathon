@@ -52,8 +52,7 @@ export default function ManualsOverview() {
     }
 
     return (
-
-        <div className="container mx-auto p-2 pt-4 min-h-screen flex flex-col max-w-xl">
+        <div className="container mx-auto p-2 pt-4 min-h-screen flex flex-col max-w-3xl">
             <Logo />
 
             <div className="w-full max-w-md">
