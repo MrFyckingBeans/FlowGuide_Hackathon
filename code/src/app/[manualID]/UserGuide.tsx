@@ -28,7 +28,7 @@ export default function Component({
   const totalSteps = steps.length
 
   const [currentStep, setCurrentStep] = useState(() => {
-    const stepParam = searchParams.get('step')
+    const stepParam = searchParams?.get('step')
     const parsedStep = stepParam ? parseInt(stepParam, 10) : 1
     return isNaN(parsedStep) || parsedStep < 1 || parsedStep > totalSteps ? 1 : parsedStep
   })

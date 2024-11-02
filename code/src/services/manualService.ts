@@ -34,3 +34,18 @@ export async function fetchLatestManuals(limit: number = 5): Promise<Manual[]> {
     throw error;
   }
 }
+
+export async function fetchManualWithSteps(manualID: string) {
+ return await prisma.manual.findUnique({
+  where: {
+    id: parseInt(manualID),
+  },
+  include: {
+    steps: {
+      include: {
+        image: true, 
+      },
+    },
+  },
+});
+}
