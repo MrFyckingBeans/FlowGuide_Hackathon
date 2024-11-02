@@ -34,7 +34,7 @@ export default function Help() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen p-4 sm:py-8 max-w-lg mx-auto">
+        <div className="flex flex-col min-h-screen p-4 sm:py-8 max-w-xl mx-auto">
             <div className="space-y-2 mb-6">
                 <h1 className="text-3xl font-bold">
                     <span className="text-blue-500">Are you lost?</span>

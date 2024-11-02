@@ -55,7 +55,7 @@ export default function Component({
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <main className="flex-grow flex flex-col items-center justify-between p-4 sm:py-8 max-w-lg mx-auto w-full">
+      <main className="flex-grow flex flex-col items-center justify-between p-4 sm:py-8 max-w-xl mx-auto w-full">
         <div className="w-full space-y-6">
           <div className="relative w-full rounded-lg overflow-hidden shadow-lg">
             <img

@@ -21,7 +21,7 @@ export default async function ManualsOverview() {
     }
 
     return (
-        <div className="container mx-auto p-4 min-h-screen flex flex-col max-w-3xl">
+        <div className="container mx-auto p-4 min-h-screen flex flex-col max-w-xl">
             <Logo />
 
             <Card className="border-none shadow-lg">

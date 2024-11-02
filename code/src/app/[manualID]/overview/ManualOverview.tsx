@@ -25,7 +25,7 @@ export default function ManualOverview({ manual, deleteStep, reorderStepsInDb }:
     }
 
     return (
-        <div className="container max-w-lg mx-auto p-4 space-y-6">
+        <div className="container max-w-xl mx-auto p-4 space-y-6">
             <div className="space-y-2">
                 <h1 className="text-2xl font-bold">{manual.title}</h1>
                 <p className="text-muted-foreground">

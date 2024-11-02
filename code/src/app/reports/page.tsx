@@ -19,7 +19,7 @@ export default async function ReportsOverview() {
     }
 
     return (
-        <div className="container mx-auto p-4 min-h-screen flex flex-col">
+        <div className="container mx-auto p-4 min-h-screen flex flex-col max-w-xl">
             <Logo />
 
             <Card className="flex-grow border-none shadow-lg">
