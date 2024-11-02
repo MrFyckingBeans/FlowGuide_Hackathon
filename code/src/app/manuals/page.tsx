@@ -60,10 +60,10 @@ export default function ManualsOverview() {
     };
 
     return (
-        <div className="container mx-auto p-2 pt-4 min-h-screen flex flex-col max-w-3xl">
+        <div className="container mx-auto p-2 pt-4 min-h-screen flex flex-col max-w-xl">
             <Logo />
 
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-xl">
                 <Card className="border-none shadow-none w-full">
                     <CardHeader>
                         <CardTitle className="text-2xl font-bold">Manuals</CardTitle>
