@@ -4,24 +4,24 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import "./styles.css"
+import RichTextEditor from "./RichTextEditor"
+
 
 interface Step {
+  id: number
+  stepNumber: number
   description: string
   imageUrl: string
 }
 
 interface UserGuideViewProps {
-  steps?: Step[]
+  steps: Step[]
+  changeStep: (description: string, stepid: number) => void
 }
 
-export default function Component({
-  steps = [
-    { description: "This is step 1", imageUrl: "/placeholder.svg?height=400&width=800" },
-    { description: "This is step 2", imageUrl: "/placeholder.svg?height=400&width=800" },
-    { description: "This is step 3", imageUrl: "/placeholder.svg?height=400&width=800" },
-  ],
+export default function Edit({
+  steps,
+  changeStep,
 }: UserGuideViewProps) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -50,6 +50,13 @@ export default function Component({
     }
   }
 
+  const submitStep = (value: string) => {
+    console.log(value, currentStep - 1)
+
+    steps[currentStep - 1].description = value
+    changeStep(value, steps[currentStep - 1].id)
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-grow flex flex-col items-center justify-between p-4 sm:py-8 max-w-lg mx-auto w-full">
@@ -64,7 +71,7 @@ export default function Component({
           </div>
           <div className="space-y-4">
             <h2 className="text-3xl font-bold text-blue-500">Step {currentStep}</h2>
-            <div dangerouslySetInnerHTML={{ __html: steps[currentStep - 1].description }} />
+            <RichTextEditor initialValue={steps[currentStep - 1].description} submit={submitStep} />
           </div>
         </div>
         <div className="w-full space-y-4 mt-8">
@@ -76,11 +83,6 @@ export default function Component({
             <Button onClick={goToNextStep} disabled={currentStep === totalSteps} size="lg">
               {currentStep === totalSteps ? "Finish" : "Next"}
             </Button>
-          </div>
-          <div className="text-center text-muted-foreground underline">
-            <Link href={`${pathname}/help?step=${currentStep}&next=${steps.length > currentStep ? currentStep + 1 : currentStep}&progress=${currentStep / totalSteps * 100}`}>
-              I'm Lost, help me!
-            </Link>
           </div>
           <div className="w-full bg-muted rounded-full h-2">
             <div

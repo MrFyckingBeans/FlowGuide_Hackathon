@@ -36,16 +36,24 @@ export async function fetchLatestManuals(limit: number = 5): Promise<Manual[]> {
 }
 
 export async function fetchManualWithSteps(manualID: string) {
- return await prisma.manual.findUnique({
-  where: {
-    id: parseInt(manualID),
-  },
-  include: {
-    steps: {
-      include: {
-        image: true, 
+  return await prisma.manual.findUnique({
+    where: {
+      id: parseInt(manualID),
+    },
+    include: {
+      steps: {
+        include: {
+          image: true,
+        },
       },
     },
-  },
-});
+  });
+}
+
+export async function updateStep(description: string, stepId: number) {
+  console.log(description, stepId)
+  await prisma.manualStep.update({
+    where: { id: stepId },
+    data: { description }
+  });
 }

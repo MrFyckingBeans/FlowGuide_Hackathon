@@ -18,8 +18,7 @@
     "mini-css-extract-plugin": "^2.9.2",
     "next": "14.2.16",
     "prisma": "^5.21.1",
-    "react": "^18",
-    "react-dom": "^18",
+    "react-quill": "^2.0.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
   },

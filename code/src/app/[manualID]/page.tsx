@@ -16,6 +16,7 @@ export default async function ManualView({ params }: { params: { manualID: strin
 
   const stepsArray = manual.steps.map((step: any) => {
     return {
+      stepNumber: step.step_number,
       description: step.description,
       imageUrl: step.image ? step.image.image_url : null,
     };
@@ -26,7 +27,7 @@ export default async function ManualView({ params }: { params: { manualID: strin
 
   return (
     <div>
-      <UserGuide steps={stepsArray} />
+      <UserGuide steps={stepsArray.sort((a: any, b: any) => a.stepNumber - b.stepNumber)} />
     </div>
   );
 }
