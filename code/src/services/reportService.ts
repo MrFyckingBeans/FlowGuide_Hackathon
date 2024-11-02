@@ -15,8 +15,6 @@ export async function fetchReportCounts(): Promise<Report[]> {
       },
     });
 
-    console.log("Fetched reports:", reports); // Debugging line
-
     return reports.map(report => ({
       id: report.id.toString(),         // Convert BigInt to string
       name: report.title,
