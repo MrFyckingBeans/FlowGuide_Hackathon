@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Calendar } from "lucide-react"
-import Image from "next/image"
 import { Skeleton } from "@/components/ui/skeleton"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Manual, Report } from "@/types"
+import Logo from "@/components/logo";
+import CreateManualButton from "@/components/createManualButton";
 
 export default function Page() {
   const [manuals, setManuals] = useState<Manual[] | null>(null); // Set null initially
@@ -53,20 +53,13 @@ export default function Page() {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <div className="flex justify-center mb-4">
-        <Image
-          src="/assets/fg-logo.svg"
-          alt="FlowGuide Logo"
-          width={200}
-          height={50}
-          priority
-        />
-      </div>
+    
+      <Logo />
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Reports</CardTitle>
-          <Link href="#" className="text-sm text-blue-500 hover:underline">
+          <Link href="/reports" className="text-sm text-blue-500 hover:underline">
             See All
           </Link>
         </CardHeader>
@@ -110,8 +103,8 @@ export default function Page() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Last generated Manuals</CardTitle>
-          <Link href="#" className="text-sm text-blue-500 hover:underline">
+          <CardTitle>Manuals</CardTitle>
+          <Link href="/manuals" className="text-sm text-blue-500 hover:underline">
             See All
           </Link>
         </CardHeader>
@@ -155,13 +148,7 @@ export default function Page() {
         </CardContent>
       </Card>
 
-      <div className="mt-auto flex justify-center">
-        <Link href="/create" className="w-full max-w-md">
-          <Button size="lg" className="w-full bg-blue-500 hover:bg-blue-600">
-            Create Manual
-          </Button>
-        </Link>
-      </div>
+      <CreateManualButton />
     </div>
   );
 }
