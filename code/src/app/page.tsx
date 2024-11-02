@@ -15,22 +15,20 @@ interface Report {
   reportCount: number
 }
 
-const reports: Report[] = [
-  { id: "102", name: "Manual 102", reportCount: 4 },
-  { id: "006", name: "Manual 006", reportCount: 3 },
-  { id: "051", name: "Manual 051", reportCount: 2 },
-]
-
 export default function Page() {
   const [manuals, setManuals] = useState<Manual[]>([])
   const [error, setError] = useState<string | null>(null)
 
+  const [reports, setReports] = useState<Report[]>([]);
+  const [reportError, setReportError] = useState<string | null>(null);
+
+
   useEffect(() => {
     async function loadLatestManuals() {
       try {
-        const response = await fetch("/api/manuals/latest"); // Use the API route
+        const response = await fetch("/api/manuals"); // Use the API route
         if (!response.ok) throw new Error("Failed to load manuals");
-  
+
         const data = await response.json();
         setManuals(data);
       } catch (error) {
@@ -38,10 +36,28 @@ export default function Page() {
         setError("Failed to load the latest manuals.");
       }
     }
-  
+
     loadLatestManuals();
   }, []);
-  
+
+
+  useEffect(() => {
+    async function loadReports() {
+      try {
+        const response = await fetch("/api/report");
+        if (!response.ok) throw new Error("Failed to load reports");
+
+        const data = await response.json();
+        setReports(data);
+      } catch (error) {
+        console.error("Failed to load reports:", error);
+        setReportError("Failed to load the reports.");
+      }
+    }
+
+    loadReports();
+  }, []);
+
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -63,28 +79,32 @@ export default function Page() {
           </Link>
         </CardHeader>
         <CardContent className="grid gap-4">
-          {reports.map((report) => (
-            <div
-              key={report.id}
-              className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
-            >
-              <span className="font-medium">{report.name}</span>
-              <span
-                className={`text-sm ${
-                  report.reportCount === 4
-                    ? "text-red-500"
-                    : report.reportCount === 3
-                    ? "text-orange-500"
-                    : report.reportCount === 2
-                    ? "text-yellow-500"
-                    : "text-green-500"
-                }`}
+          {reportError ? (
+            <p className="text-red-500">{reportError}</p>
+          ) : (
+            reports.map((report) => (
+              <div
+                key={report.id}
+                className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
               >
-                {report.reportCount} Reports
-              </span>
-            </div>
-          ))}
+                <span className="font-medium">{report.name}</span>
+                <span
+                  className={`text-sm ${report.reportCount === 4
+                      ? "text-red-500"
+                      : report.reportCount === 3
+                        ? "text-orange-500"
+                        : report.reportCount === 2
+                          ? "text-yellow-500"
+                          : "text-green-500"
+                    }`}
+                >
+                  {report.reportCount} Reports
+                </span>
+              </div>
+            ))
+          )}
         </CardContent>
+
       </Card>
 
       <Card>
