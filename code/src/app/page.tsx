@@ -77,18 +77,18 @@ export default function Page() {
           ) : reportError ? (
             <p className="text-red-500">{reportError}</p>
           ) : (
-            reports.map((report) => (
+            reports.slice(0, 2).map((report) => (
               <Link href={`/${report.id}/overview`} key={report.id}>
                 <div className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:cursor-pointer">
                   <span className="font-medium text-sm">{report.name}</span> {/* Explicitly set text-sm here */}
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${report.reportCount >= 4
-                        ? "bg-red-100 text-red-700"
-                        : report.reportCount === 3
-                          ? "bg-orange-100 text-orange-700"
-                          : report.reportCount === 2
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-green-100 text-green-700"
+                      ? "bg-red-100 text-red-700"
+                      : report.reportCount === 3
+                        ? "bg-orange-100 text-orange-700"
+                        : report.reportCount === 2
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-green-100 text-green-700"
                       }`}
                   >
                     {report.reportCount} {report.reportCount === 1 ? "Report" : "Reports"}
@@ -98,8 +98,6 @@ export default function Page() {
             ))
           )}
         </CardContent>
-
-
       </Card>
 
       <Card>
@@ -128,7 +126,7 @@ export default function Page() {
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (
-            manuals.map((manual) => (
+            manuals.slice(0, 2).map((manual) => ( // Limiting to 2 manuals
               <Link href={`/${manual.id.toString()}`} key={manual.id.toString()}>
                 <div
                   key={manual.id.toString()}
@@ -148,6 +146,7 @@ export default function Page() {
           )}
         </CardContent>
       </Card>
+
 
       <CreateManualButton className="mt-auto" />
 
