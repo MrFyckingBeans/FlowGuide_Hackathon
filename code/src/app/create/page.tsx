@@ -1,12 +1,235 @@
-// src/app/create/page.tsx
-'use client';
+"use client";
 
-export default function CreateManual() {
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Reorder } from "framer-motion";
+import { useQueryState, parseAsInteger } from "nuqs";
+
+export default function Component() {
+    const [step, setStep] = useQueryState("step", parseAsInteger.withDefault(0));
+    const [images, setImages] = useState<{ name: string; src: string; file?: File; url?: string }[]>([]);
+    const [guideSteps, setGuideSteps] = useState<{ title: string; description: string; url: string }[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
+
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = event.target;
+        if (files) {
+            const newImages = Array.from(files).map((file) => {
+                return new Promise<{ name: string; src: string; file: File }>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        resolve({ name: file.name, src: reader.result as string, file });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            Promise.all(newImages).then((results) => {
+                setImages((prev) => [...prev, ...results]);
+            });
+        }
+    };
+
+    const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImages((prev) => [...prev, { name: file.name, src: reader.result as string, file }]);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handelAiUpload = async () => {
+        try {
+            const formattedImages = images.map((image) => ({
+                name: image.name,
+                fileData: image.src.split(",")[1], // Extract Base64 data
+            }));
+
+            const uploadSupaBase = await fetch("/api/uploadImages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ images: formattedImages }),
+            });
+
+            const uploadedImages = await uploadSupaBase.json();
+            const imagesUrl = uploadedImages.map((image: { url: string }) => image.url);
+            console.log("Images URL:", imagesUrl);
+            const response = await fetch("/api/getAiDescription", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ images: imagesUrl }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Generated guide:", data.stamps);
+                // router.push("/"); // Redirect or display the guide as needed
+            } else {
+                console.error("Error generating guide:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error calling generateGuide API:", error);
+        }
+        return guideSteps;
+    };
+
     return (
-      <div>
-        <h1>Create a New Manual</h1>
-        <p>Form or other content to create a new manual goes here.</p>
-      </div>
+        <div className="min-h-screen bg-background">
+            <div className="container max-w-md px-4 py-6">
+                <h1 className="text-3xl font-bold tracking-tight">
+                    Manual 116 <span className="text-muted-foreground">(Draft)</span>
+                </h1>
+
+                {step === 0 && (
+                    <div className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="device-name">Enter the name of the device*</Label>
+                                <Input
+                                    id="device-name"
+                                    placeholder="Enter device name..."
+                                    className="h-14 bg-gray-100 w-full border border-grey rounded-lg pl-2"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Enter a short description*</Label>
+                                <Input
+                                    id="description"
+                                    placeholder="Enter description..."
+                                    className="h-14 bg-gray-100 w-full border border-grey rounded-lg pl-2"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <Label>Choose your pictures</Label>
+                            <div className="grid gap-4">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple // Allow multiple files to be selected
+                                    onChange={handleFileUpload}
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                />
+                                <Button
+                                    className="h-14 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    Upload Images
+                                </Button>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    capture="environment"
+                                    onChange={handleCameraCapture}
+                                    ref={cameraInputRef}
+                                    className="hidden"
+                                />
+                                <Button
+                                    className="h-14 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                                    onClick={() => cameraInputRef.current?.click()}
+                                >
+                                    Take Picture
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <Label>Uploaded Images</Label>
+                            {images.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className="border border-gray-300 p-2 rounded-lg max-w-xs flex justify-between items-center"
+                                >
+                                    <p className="text-gray-700 truncate overflow-hidden">{image.name}</p>
+                                    <Button
+                                        className="ml-4 text-red-500"
+                                        onClick={() => setImages((prev) => prev.filter((_, i) => i !== index))}
+                                    >
+                                        Delete
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {step === 1 && (
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-bold">Drag each picture to match the process</h2>
+                        <Reorder.Group axis="y" values={images} onReorder={setImages}>
+                            {images.map((image, index) => (
+                                <Reorder.Item
+                                    key={image.name}
+                                    value={image}
+                                    className="flex items-center space-x-4 mb-4"
+                                >
+                                    <span className="text-xl font-bold w-6">{index + 1}.</span>
+                                    <div className="flex items-center p-2 border border-gray-300 rounded-lg flex-grow max-w-xs">
+                                        <img
+                                            src={image.src}
+                                            alt={image.name}
+                                            className="w-12 h-12 rounded-lg object-cover mr-2"
+                                        />
+                                        <div className="truncate flex-grow">
+                                            <Input
+                                                defaultValue={image.name}
+                                                className="text-blue-500 hover:underline bg-transparent border-none w-full"
+                                                readOnly
+                                            />
+                                        </div>
+                                        <Button
+                                            className="text-red-500 ml-2"
+                                            onClick={() => setImages((prev) => prev.filter((_, i) => i !== index))}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </Reorder.Item>
+                            ))}
+                        </Reorder.Group>
+                    </div>
+                )}
+
+                <div className="fixed bottom-0 left-0 right-0 p-4">
+                    <div className="container max-w-md flex justify-between gap-4">
+                        <Button
+                            onClick={() => setStep(Math.max(step - 1, 0))}
+                            className="h-10 w-1/2 border border-blue-500 text-blue-500 rounded-lg"
+                        >
+                            Back
+                        </Button>
+                        {step === 1 ? (
+                            <Button onClick={handelAiUpload} className="h-10 w-1/2 bg-blue-500 text-white rounded-lg">
+                                Generate Guide
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={() => setStep(step + 1)}
+                                className="h-10 w-1/2 border border-blue-500 text-blue-500 rounded-lg"
+                            >
+                                Next
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
     );
-  }
-  
+}
