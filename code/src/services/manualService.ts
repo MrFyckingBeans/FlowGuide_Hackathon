@@ -50,6 +50,20 @@ export async function fetchManualWithSteps(manualID: string) {
   });
 }
 
+export async function fetchManualWithStepsWithReports(manualID: string) {
+  return await prisma.manual.findUnique({
+    where: { id: parseInt(manualID) },
+    include: {
+      steps: {
+        include: {
+          image: true,
+          feedback: true,
+        },
+      },
+    },
+  });
+}
+
 export async function updateStep(description: string, stepId: number) {
   console.log(description, stepId)
   await prisma.manualStep.update({
@@ -57,3 +71,10 @@ export async function updateStep(description: string, stepId: number) {
     data: { description }
   });
 }
+
+export async function deleteStep(stepId: number) {
+  await prisma.manualStep.delete({
+    where: { id: stepId }
+  });
+}
+
