@@ -1,5 +1,6 @@
 // src/app/[manualID]/help/page.tsx
 
+import { addFeedbackToDatabase } from "@/services/addGuidToDatabase";
 import Help from "./Help";
 import { generateTextFromImage, generateTextFromMessages, pushImageToBucket } from "./helper";
 
@@ -14,7 +15,7 @@ export default async function ManualHelp({ params }: { params: { manualID: strin
     const file = formData.get("file") as File;
     const url = await pushImageToBucket(file)
     const text = await generateTextFromImage(url, params.manualID)
-    console.log(url, params.manualID, parseInt(formData.get("step") as string))
+    await addFeedbackToDatabase(parseInt(params.manualID), parseInt(formData.get("step") as string), url)
     return { text: text, url: url };
   }
 
