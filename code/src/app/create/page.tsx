@@ -83,8 +83,6 @@ export default function Component() {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("Generated guide:", data);
-
                 router.push("/");
             } else {
                 console.error("Error generating guide:", response.statusText);
@@ -119,7 +117,7 @@ export default function Component() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Enter a short description</Label>
+                                <Label htmlFor="description">Enter a optional description</Label>
                                 <Input
                                     id="description"
                                     placeholder="description..."
@@ -157,7 +155,7 @@ export default function Component() {
                                     className="hidden"
                                 />
                                 <Button
-                                    className="h-14 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                                    className="h-14 bg-blue-500 hover:bg-blue-600 text-white rounded-lg mt-3"
                                     onClick={() => cameraInputRef.current?.click()}
                                 >
                                     Take Picture
@@ -165,23 +163,25 @@ export default function Component() {
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            <Label>Uploaded Images</Label>
-                            {images.map((image, index) => (
-                                <div
-                                    key={index}
-                                    className="border border-gray-300 p-2 rounded-lg max-w-xs flex justify-between items-center mx-auto"
-                                >
-                                    <p className="text-gray-700 truncate overflow-hidden">{image.name}</p>
-                                    <button
-                                        className="text-red-500 bg-transparent border-none cursor-pointer invisible"
-                                        onClick={() => setImages((prev) => prev.filter((_, i) => i !== index))}
+                        {images.length > 0 && (
+                            <div className="space-y-4">
+                                <Label>Uploaded Images: </Label>
+                                {images.map((image, index) => (
+                                    <div
+                                        key={index}
+                                        className="border border-gray-300 p-2 rounded-lg max-w-xs flex justify-between items-center mx-auto"
                                     >
-                                        <span className="visible">Delete</span>
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
+                                        <p className="text-gray-700 truncate overflow-hidden">{image.name}</p>
+                                        <button
+                                            className="text-red-500 bg-transparent border-none cursor-pointer"
+                                            onClick={() => setImages((prev) => prev.filter((_, i) => i !== index))}
+                                        >
+                                            <span className="visible">Delete</span>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 
