@@ -1,27 +1,32 @@
 import { prisma } from "@/lib/prisma";
 
 export const addGuidToDatabase = async (
-    manualName: string,
+    manualName: string | null,
     description: string | null,
     steps: { title: string; description: string; url: string }[]
 ) => {
-    const data: any = {
-        title: manualName,
+    const data = {
+        title: manualName || "no title",
+        description: description || "no description",
         steps: {
-            create: steps,
+            create: steps.map((step, index) => ({
+                step_number: index + 1,
+                title: step.title,
+                description: step.description,
+                image_url: step.url,  // Match schema field name
+            })),
         },
     };
 
-    if (description) {
-        data.description = description;
+    try {
+        const newManual = await prisma.manual.create({ data });
+        console.log("Manual created successfully:", newManual);
+    } catch (error) {
+        console.error("Error creating manual:", error);
     }
-    const newManual = await prisma.manual.create({ data });
-    for (const step of steps) {
-        console.log("uuuuuuuuuuuuuuuuuuuu");
-        await addStepToDatabase(newManual.id, steps.indexOf(step) + 1, step);
-    }
-    console.log("afdkjsaöldkjföl");
 };
+
+
 
 const addStepToDatabase = async (
     manualId: bigint,

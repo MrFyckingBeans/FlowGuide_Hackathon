@@ -54,7 +54,7 @@ export async function POST(req: Request) {
             url : step.ImageURL,
         }));
 
-        await addGuidToDatabase(response.deviceName, response.description, stepsData);
+        await addGuidToDatabase(response.NameOfDevice, response.Description, stepsData);
 
         return NextResponse.json(object);
     } catch (error: any) {

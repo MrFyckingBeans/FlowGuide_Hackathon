@@ -84,13 +84,8 @@ export default function Component() {
             if (response.ok) {
                 const data = await response.json();
                 console.log("Generated guide:", data);
-                // map object like this to database
 
-
-                // Redirect or display the guide as needed
                 // router.push("/");
-
-                // router.push("/"); // Redirect or display the guide as needed
             } else {
                 console.error("Error generating guide:", response.statusText);
             }
