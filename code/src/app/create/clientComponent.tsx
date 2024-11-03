@@ -1,17 +1,12 @@
-// src/app/create/ClientComponent.tsx
 "use client";
 
-import { useState, useRef, Suspense } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Reorder } from "framer-motion";
 import { useQueryState, parseAsInteger } from "nuqs";
-
-function LoadingComponent() {
-  return <div>Loading...</div>;
-}
 
 export default function ClientComponent() {
   const [step, setStep] = useQueryState("step", parseAsInteger.withDefault(0));
@@ -23,90 +18,81 @@ export default function ClientComponent() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  function LoadingComponent() {
-    return <div>Loading...</div>;
-  }
-  
-
-const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (files) {
-        const newImages = Array.from(files).map((file) => {
-            return new Promise<{ name: string; src: string; file: File }>((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    resolve({ name: file.name, src: reader.result as string, file });
-                };
-                reader.readAsDataURL(file);
-            });
+      const newImages = Array.from(files).map((file) => {
+        return new Promise<{ name: string; src: string; file: File }>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve({ name: file.name, src: reader.result as string, file });
+          };
+          reader.readAsDataURL(file);
         });
+      });
 
-        Promise.all(newImages).then((results) => {
-            setImages((prev) => [...prev, ...results]);
-        });
+      Promise.all(newImages).then((results) => {
+        setImages((prev) => [...prev, ...results]);
+      });
     }
-};
+  };
 
-const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            setImages((prev) => [...prev, { name: file.name, src: reader.result as string, file }]);
-        };
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImages((prev) => [...prev, { name: file.name, src: reader.result as string, file }]);
+      };
+      reader.readAsDataURL(file);
     }
-};
+  };
 
-const handelAiUpload = async () => {
+  const handleAiUpload = async () => {
     setIsLoading(true);
     try {
-        const formattedImages = images.map((image) => ({
-            name: image.name,
-            fileData: image.src.split(",")[1], // Extract Base64 data
-        }));
+      const formattedImages = images.map((image) => ({
+        name: image.name,
+        fileData: image.src.split(",")[1],
+      }));
 
-        const uploadSupaBase = await fetch("/api/uploadImages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                images: formattedImages,
-            }),
-        });
+      const uploadSupaBase = await fetch("/api/uploadImages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ images: formattedImages }),
+      });
 
-        const uploadedImages = await uploadSupaBase.json();
-        const imagesUrl = Array.isArray(uploadedImages) ? uploadedImages.map((image: { url: string }) => image.url) : [];
-        const response = await fetch("/api/getAiDescription", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                NameOfDevice: deviceName, // Use state value
-                Description: description, // Use state value
-                images: imagesUrl,
-            }),
-        });
+      const uploadedImages = await uploadSupaBase.json();
+      const imagesUrl = Array.isArray(uploadedImages) ? uploadedImages.map((image: { url: string }) => image.url) : [];
+      const response = await fetch("/api/getAiDescription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          NameOfDevice: deviceName,
+          Description: description,
+          images: imagesUrl,
+        }),
+      });
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Generated guide:", data);
-
-            router.push("/");
-        } else {
-            console.error("Error generating guide:", response.statusText);
-        }
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Generated guide:", data);
+        router.push("/");
+      } else {
+        console.error("Error generating guide:", response.statusText);
+      }
     } catch (error) {
-        console.error("Error calling generateGuide API:", error);
+      console.error("Error calling generateGuide API:", error);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
+  };
 
   return (
-    <Suspense fallback={<LoadingComponent />}>
       <div className="min-h-screen bg-background flex">
             <div className="container max-w-md px-4 py-6 mx-auto">
                 <h1 className="text-3xl font-bold tracking-tight text-center">
@@ -246,7 +232,7 @@ const handelAiUpload = async () => {
                         </Button>
                         {step === 1 ? (
                             <Button
-                                onClick={handelAiUpload}
+                                onClick={handleAiUpload}
                                 className="h-10 w-1/2 bg-blue-500 text-white rounded-lg flex items-center justify-center"
                                 disabled={isLoading}
                             >
@@ -275,6 +261,5 @@ const handelAiUpload = async () => {
                 </div>
             </div>
         </div>
-    </Suspense>
   );
 }
