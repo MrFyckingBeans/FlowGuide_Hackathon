@@ -78,7 +78,7 @@ export default function Component({
             </Button>
           </div>
           <div className="text-center text-muted-foreground underline">
-            <Link href={`${pathname}/help?step=${currentStep}&next=${steps.length > currentStep ? currentStep + 1 : currentStep}`}>
+            <Link href={`${pathname}/help?step=${currentStep}&next=${steps.length > currentStep ? currentStep + 1 : currentStep}&progress=${(currentStep / totalSteps) * 100}`}>
               I&apos;m lost, help me!
             </Link>
           </div>
