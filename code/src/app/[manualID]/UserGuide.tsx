@@ -79,7 +79,7 @@ export default function Component({
           </div>
           <div className="text-center text-muted-foreground underline">
             <Link href={`${pathname}/help?step=${currentStep}&next=${steps.length > currentStep ? currentStep + 1 : currentStep}`}>
-              I'm Lost, help me!
+              I'm lost, help me!
             </Link>
           </div>
           <div className="w-full bg-muted rounded-full h-2">

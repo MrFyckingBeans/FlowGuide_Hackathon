@@ -145,7 +145,7 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
                                             }`}
                                     >
                                         {message.role === 'assistant' && (
-                                            <div className="font-semibold mb-1">Your sAIviour</div>
+                                            <div className="font-semibold mb-1">Your saviour</div>
                                         )}
                                         {message.content}
                                     </div>
