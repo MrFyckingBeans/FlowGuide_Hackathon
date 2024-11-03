@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Camera, LoaderCircle, Trash, Upload } from "lucide-react"
+import { Camera, LoaderCircle, Upload } from "lucide-react"
 import { usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
@@ -17,6 +17,8 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
     const searchParams = useSearchParams()
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
+    const [error, setError] = useState<string | null>(null);
+
 
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,15 +52,27 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
     };
 
     const handleUploadImage = async (file: File, pictureData: string) => {
-        setLoading(true)
+        setLoading(true);
+        setError(null); // Reset error state
+    
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("step", searchParams?.get('step') || "")
-        const res = await uploadImage(formData)
-        setMessages([{ role: 'assistant', content: res.text }])
-        setPicture({ link: res.url, data: pictureData })
-        setLoading(false)
-    }
+        formData.append("step", searchParams?.get('step') || "");
+    
+        const res = await uploadImage(formData);
+    
+        // Type guard to check if the result has an error
+        if ("error" in res && typeof res.error === "string") {
+            setError(res.error); // Set the error if upload fails
+        } else if ("text" in res && "url" in res) {
+            setMessages([{ role: 'assistant', content: res.text }]);
+            setPicture({ link: res.url, data: pictureData });
+        }
+    
+        setLoading(false);
+    };
+    
+    
 
 
 
@@ -75,7 +89,9 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
             setMessages(currentMessages)
             input.value = ''
 
-            let picturemessage = [{ role: "user", content: picture.link }]
+            //let picturemessage = [{ role: "user", content: picture.link }]
+            const picturemessage = [{ role: "user", content: picture.link }]
+
 
             Array.prototype.push.apply(picturemessage, currentMessages)
 
@@ -92,7 +108,7 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
                 <h1 className="text-3xl font-bold">
                     <span className="text-blue-500">Are you lost?</span>
                     <br />
-                    Don't worry.
+                    Don&apos;t worry.
                 </h1>
                 <p className="text-muted-foreground">
                     Upload or take a picture of your current state and let us tell you how to move on.
@@ -128,6 +144,13 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
                     Take Picture
                 </Button>
             </div>
+
+            {error && (
+    <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
+        {error}
+    </div>
+)}
+
             {messages.length > 0 ?
                 <Card className="flex-1 p-4 mb-6 flex flex-col">
                     <div className="flex-1 overflow-y-auto mb-4">

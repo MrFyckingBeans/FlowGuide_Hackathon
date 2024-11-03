@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, MoreVertical, Edit2, Trash2 } from "lucide-react";
+import { Calendar, MoreVertical, Edit2, Trash2, Copy } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 import { useRouter } from "next/navigation"; 
@@ -59,6 +59,11 @@ export default function ManualsOverview() {
         router.push(`/${manualId}/edit`); // Navigate to the edit page
     };
 
+    const handleCopyToClipboard = (manualId: string) => {
+        const url = `${window.location.origin}/${manualId}`;
+        navigator.clipboard.writeText(url); // Copy the URL to the clipboard
+    }
+
     return (
         <div className="container mx-auto p-2 pt-4 min-h-screen flex flex-col max-w-xl">
             <Logo />
@@ -84,6 +89,9 @@ export default function ManualsOverview() {
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => handleCopyToClipboard(manual.id)}>
+                                                <Copy className="mr-2 h-4 w-4 text-blue-500" /> Copy URL
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleEditClick(manual.id)}>
                                                 <Edit2 className="mr-2 h-4 w-4 text-blue-500" /> Edit
                                             </DropdownMenuItem>

@@ -28,13 +28,11 @@ export const addGuidToDatabase = async (
 
 
 
-const addStepToDatabase = async (
+export const addStepToDatabase = async (
     manualId: bigint,
     stepNumber: number,
     step: { title: string; description: string; url: string }
 ) => {
-    console.log("im here");
-    console.log(step, manualId)
     const data = {
         step_number: stepNumber,
         title: step.title,
@@ -42,7 +40,6 @@ const addStepToDatabase = async (
         image_url: step.url,
         manual: { connect: { id: manualId } },
     };
-    console.log("afdkjsaöldkjföl");
 
     await prisma.manualStep.create({ data });
 };

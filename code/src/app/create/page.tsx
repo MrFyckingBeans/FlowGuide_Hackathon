@@ -13,7 +13,7 @@ export default function Component() {
     const [deviceName, setDeviceName] = useState(""); // New state for device name
     const [description, setDescription] = useState(""); // New state for description
     const [images, setImages] = useState<{ name: string; src: string; file?: File; url?: string }[]>([]);
-    const [guideSteps, setGuideSteps] = useState<{ title: string; description: string; url: string }[]>([]);
+    //const [guideSteps, setGuideSteps] = useState<{ title: string; description: string; url: string }[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
