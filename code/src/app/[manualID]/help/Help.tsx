@@ -13,8 +13,6 @@ export default function Help({ uploadImage, uploadText }: { uploadImage: (formDa
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState<{ role: string, content: string }[]>([])
 
-    console.log(picture)
-
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const fileInputRef = useRef<HTMLInputElement>(null);
