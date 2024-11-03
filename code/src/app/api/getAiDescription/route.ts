@@ -1,3 +1,4 @@
+import { addGuidToDatabase } from "@/services/addGuidToDatabase";
 import { generateObject } from "ai";
 import { NextResponse } from "next/server";
 import { openai } from "@ai-sdk/openai";
@@ -5,58 +6,59 @@ import { z } from "zod";
 
 export async function POST(req: Request) {
     try {
-        // Parse the request body to get image URLs
         const response = await req.json();
+        console.log("Images: ", response);
 
-        console.log("Images asdfölkasdjf:", response);
-        // Format each image URL as a message for the AI model
         const content = [
             {
                 type: "text",
-                text: "From the images I have provided, can you create a step-by-step guide? The images are in order. Only include things you see in the pictures.",
+                text: `Please create a structured, step-by-step guide based on the provided images, ordered sequentially. Each step should contain a title, description.
+                The steps should focus on generating a user-friendly guide. Give me the url of the image for each step (so on which url the step is based).
+                these are the urls: ${response.images.join(", ")}urlresponse.images.join(", ")`,
             },
-            // {
-            //     type: "text",
-            //     text: images.NameOfDevice,
-            // },
-            // {
-            //     type: "text",
-            //     text: images.Description,
-            // },
             ...response.images.map((url: string) => ({
                 type: "image",
                 image: new URL(url),
             })),
         ];
 
-        // Pass the structured content as a single message
         const { object } = await generateObject({
             model: openai("gpt-4-turbo"),
             maxTokens: 512,
             schema: z.object({
-                stamps: z.array(
+                steps: z.array(
                     z.object({
-                        TitleOfStep: z.string(),
+                        title: z.string(),
                         description: z.string(),
-                        imageurl: z.string().optional(),
+                        ImageURL: z.string().url(),
                     })
                 ),
             }),
             messages: [
                 {
                     role: "user",
-                    content,  // Wrap `content` in a single message
+                    content,
                 },
             ],
         });
 
-        // Check if the object was successfully generated
         if (!object) {
-            return NextResponse.json({ error: "Failed to generate object" }, { status: 500 });
+            return NextResponse.json({ error: "Failed to generate guide object" }, { status: 500 });
         }
+
+
+        // Prepare steps data to be saved in the database
+        const stepsData = object.steps.map(step => ({
+            title: step.title,
+            description: step.description,
+            url : step.ImageURL,
+        }));
+
+        await addGuidToDatabase(response.deviceName, response.description, stepsData);
 
         return NextResponse.json(object);
     } catch (error: any) {
+        console.error("Error in POST request:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

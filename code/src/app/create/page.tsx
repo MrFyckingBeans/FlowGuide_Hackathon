@@ -68,7 +68,7 @@ export default function Component() {
             });
 
             const uploadedImages = await uploadSupaBase.json();
-            const imagesUrl = uploadedImages.map((image: { url: string }) => image.url);
+            const imagesUrl = Array.isArray(uploadedImages) ? uploadedImages.map((image: { url: string }) => image.url) : [];
             const response = await fetch("/api/getAiDescription", {
                 method: "POST",
                 headers: {
@@ -84,6 +84,12 @@ export default function Component() {
             if (response.ok) {
                 const data = await response.json();
                 console.log("Generated guide:", data);
+                // map object like this to database
+
+
+                // Redirect or display the guide as needed
+                // router.push("/");
+
                 // router.push("/"); // Redirect or display the guide as needed
             } else {
                 console.error("Error generating guide:", response.statusText);
@@ -250,9 +256,13 @@ export default function Component() {
                         ) : (
                             <Button
                                 onClick={() => setStep(step + 1)}
-                                className="h-10 w-1/2 border border-blue-500 text-blue-500 rounded-lg bg-white"
+                                className={`h-10 w-1/2 border border-blue-500 text-blue-500 rounded-lg bg-white ${
+                                    !deviceName ? "hover:bg-gray-200" : ""
+                                }`}
+                                disabled={!deviceName}
+                                title={!deviceName ? "Add name to continue" : ""}
                             >
-                                Next
+                                {deviceName ? "Next" : "Add name to continue"}
                             </Button>
                         )}
                     </div>
