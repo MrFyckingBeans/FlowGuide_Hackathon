@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Reorder } from "framer-motion";
 import { useQueryState, parseAsInteger } from "nuqs";
+import { Suspense } from "react";
 
 export default function Component() {
     const [step, setStep] = useQueryState("step", parseAsInteger.withDefault(0));
@@ -18,6 +19,11 @@ export default function Component() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+
+    function LoadingComponent() {
+        return <div>Loading...</div>;
+      }
+      
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = event.target;
@@ -97,6 +103,7 @@ export default function Component() {
     };
 
     return (
+        <Suspense fallback={<LoadingComponent />}>
         <div className="min-h-screen bg-background flex">
             <div className="container max-w-md px-4 py-6 mx-auto">
                 <h1 className="text-3xl font-bold tracking-tight text-center">
@@ -265,5 +272,6 @@ export default function Component() {
                 </div>
             </div>
         </div>
+        </Suspense>
     );
 }
