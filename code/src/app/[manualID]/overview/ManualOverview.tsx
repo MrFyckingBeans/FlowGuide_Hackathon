@@ -42,7 +42,7 @@ export default function ManualOverview({ manual, deleteStep, reorderStepsInDb }:
                                     <div className="w-1/3 relative">
                                         <Link href={`/${manual.id}?step=${step.step_number}`}>
                                             <img
-                                                src={step.image?.image_url || '/placeholder.svg'}
+                                                src={step?.image_url || '/placeholder.svg'}
                                                 alt={`Step ${step.step_number}`}
                                                 className="h-full w-full object-cover"
                                             />

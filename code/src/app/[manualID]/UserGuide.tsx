@@ -5,11 +5,11 @@ import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import "./styles.css"
+import "./style.css"
 
 interface Step {
   description: string
-  imageUrl: string
+  image_url: string
 }
 
 interface UserGuideViewProps {
@@ -18,9 +18,9 @@ interface UserGuideViewProps {
 
 export default function Component({
   steps = [
-    { description: "This is step 1", imageUrl: "/placeholder.svg?height=400&width=800" },
-    { description: "This is step 2", imageUrl: "/placeholder.svg?height=400&width=800" },
-    { description: "This is step 3", imageUrl: "/placeholder.svg?height=400&width=800" },
+    { description: "This is step 1", image_url: "/placeholder.svg?height=400&width=800" },
+    { description: "This is step 2", image_url: "/placeholder.svg?height=400&width=800" },
+    { description: "This is step 3", image_url: "/placeholder.svg?height=400&width=800" },
   ],
 }: UserGuideViewProps) {
   const searchParams = useSearchParams()
@@ -59,7 +59,7 @@ export default function Component({
         <div className="w-full space-y-6">
           <div className="relative w-full rounded-lg overflow-hidden shadow-lg">
             <img
-              src={steps[currentStep - 1].imageUrl}
+              src={steps[currentStep - 1].image_url}
               alt={`Step ${currentStep} illustration`}
             />
           </div>

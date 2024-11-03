@@ -34,7 +34,7 @@ export async function fetchLatestManuals(limit: number = 5): Promise<Manual[]> {
   }
 }
 
-export async function fetchManualWithOnlySteps(manualID: string) {
+export async function fetchManualWithSteps(manualID: string) {
   return await prisma.manual.findUnique({
     where: {
       id: parseInt(manualID),
@@ -45,28 +45,12 @@ export async function fetchManualWithOnlySteps(manualID: string) {
   });
 }
 
-export async function fetchManualWithSteps(manualID: string) {
-  return await prisma.manual.findUnique({
-    where: {
-      id: parseInt(manualID),
-    },
-    include: {
-      steps: {
-        include: {
-          image: true,
-        },
-      },
-    },
-  });
-}
-
 export async function fetchManualWithStepsWithReports(manualID: string) {
   return await prisma.manual.findUnique({
     where: { id: parseInt(manualID) },
     include: {
       steps: {
         include: {
-          image: true,
           feedback: true,
         },
       },
@@ -93,26 +77,26 @@ export async function fetchAllManuals(): Promise<ManualWithImages[]> {
         description: true,
         created_at: true,
         updated_at: true,
-        images: {
-          select: {
+        manualstep: {
+          include: {
             image_url: true,
-          },
-        },
-      },
+          }
+        }
+    },
     });
 
-    return manuals.map(manual => ({
-      id: manual.id.toString(),
-      title: manual.title,
-      description: manual.description,
-      created_at: manual.created_at,
-      updated_at: manual.updated_at,
-      images: manual.images.map(image => image.image_url),
-    }));
-  } catch (error) {
-    console.error("Error fetching manuals:", error);
-    throw error;
-  }
+  return manuals.map(manual => ({
+    id: manual.id.toString(),
+    title: manual.title,
+    description: manual.description,
+    created_at: manual.created_at,
+    updated_at: manual.updated_at,
+    images: manual.manualstep.map(step => step.image_url),
+  }));
+} catch (error) {
+  console.error("Error fetching manuals:", error);
+  throw error;
+}
 }
 
 

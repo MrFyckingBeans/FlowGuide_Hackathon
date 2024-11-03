@@ -25,13 +25,8 @@ export interface Step {
   id: number;
   step_number: number;
   description: string;
-  image?: Image;
-  feedback?: Feedback[];
-}
-
-export interface Image {
-  id: string;
   image_url: string;
+  feedback?: Feedback[];
 }
 
 export interface Feedback {
