@@ -1,9 +1,11 @@
 import { deleteStep, fetchManualWithStepsWithReports, reorderSteps } from "@/services/manualService";
 import ManualOverview from "./ManualOverview";
 import { revalidatePath } from "next/cache";
+import { Step } from "@/types";
 
 export default async function ManualView({ params }: { params: { manualID: string } }) {
   const manual: any = await fetchManualWithStepsWithReports(params.manualID)
+  console.log(manual)
 
   if (!manual) {
     return <div>Manual not found</div>

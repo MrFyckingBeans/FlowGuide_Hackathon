@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import RichTextEditor from "./RichTextEditor"
@@ -11,9 +10,9 @@ import Link from "next/link"
 
 interface Step {
   id: number
-  stepNumber: number
+  step_number: number
   description: string
-  imageUrl: string
+  image_url: string
 }
 
 interface UserGuideViewProps {
@@ -65,7 +64,7 @@ export default function Edit({
         <div className="w-full space-y-6">
           <div className="relative w-full rounded-lg overflow-hidden shadow-lg">
             <img
-              src={steps[currentStep - 1].imageUrl}
+              src={steps[currentStep - 1].image_url}
               alt={`Step ${currentStep} illustration`}
             />
           </div>

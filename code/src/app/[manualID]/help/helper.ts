@@ -6,7 +6,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { fetchManualWithOnlySteps } from "@/services/manualService";
+import { fetchManualWithSteps } from "@/services/manualService";
 import { Step } from "@/types";
 
 export const pushImageToBucket = async (file: File) => {
@@ -25,7 +25,7 @@ export const pushImageToBucket = async (file: File) => {
 }
 
 const getGuideText = async (manualID: string) => {
-    const manual = await fetchManualWithOnlySteps(manualID)
+    const manual = await fetchManualWithSteps(manualID)
     return manual?.steps.map((step: Step) => step.description).join("\n")
 }
 

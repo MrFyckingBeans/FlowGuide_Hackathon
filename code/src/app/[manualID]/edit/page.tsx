@@ -16,14 +16,6 @@ export default async function ManualEdit({ params }: { params: { manualID: strin
     return <div>Manual not found</div>
   }
 
-  const stepsArray = manual.steps.map((step: any) => {
-    return {
-      id: step.id,
-      stepNumber: step.step_number,
-      description: step.description,
-      imageUrl: step.image ? step.image.image_url : null,
-    };
-  });
 
   async function changeStep(description: string, stepId: number) {
     'use server'
@@ -32,6 +24,6 @@ export default async function ManualEdit({ params }: { params: { manualID: strin
 
 
   return (
-    <Edit steps={stepsArray.sort((a: any, b: any) => a.stepNumber - b.stepNumber)} changeStep={changeStep} />
+    <Edit steps={manual.steps.sort((a: any, b: any) => a.step_number - b.step_number)} changeStep={changeStep} />
   );
 }
