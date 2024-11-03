@@ -14,7 +14,6 @@ export interface ManualWithImages extends Manual {
   images: string[]; // Explicitly declare as an array of strings
 }
 
-
 export interface Report {
   id: string;           // BigInt converted to string for JSON serialization
   name: string;         // Manual title

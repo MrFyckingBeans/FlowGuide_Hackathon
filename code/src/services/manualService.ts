@@ -67,7 +67,6 @@ export async function updateStep(description: string, stepId: number) {
 }
 
 
-// Adjust fetchAllManuals in manualService to provide correct types
 export async function fetchAllManuals(): Promise<ManualWithImages[]> {
   try {
     const manuals = await prisma.manual.findMany({
@@ -77,27 +76,31 @@ export async function fetchAllManuals(): Promise<ManualWithImages[]> {
         description: true,
         created_at: true,
         updated_at: true,
-        manualstep: {
-          include: {
-            image_url: true,
-          }
-        }
-    },
+        steps: {  // Select `steps` relation
+          select: {
+            image_url: true,  // Only select `image_url` from each step
+          },
+        },
+      },
     });
 
-  return manuals.map(manual => ({
-    id: manual.id.toString(),
-    title: manual.title,
-    description: manual.description,
-    created_at: manual.created_at,
-    updated_at: manual.updated_at,
-    images: manual.manualstep.map(step => step.image_url),
-  }));
-} catch (error) {
-  console.error("Error fetching manuals:", error);
-  throw error;
+    return manuals.map(manual => ({
+      id: manual.id.toString(),
+      title: manual.title,
+      description: manual.description,
+      created_at: manual.created_at,
+      updated_at: manual.updated_at,
+      images: manual.steps.map(step => step.image_url),  // Map `steps` to get `image_url`
+    }));
+  } catch (error) {
+    console.error("Error fetching manuals:", error);
+    throw error;
+  }
 }
-}
+
+
+
+
 
 
 export async function deleteStep(stepId: number) {

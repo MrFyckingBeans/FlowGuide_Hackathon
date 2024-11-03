@@ -12,12 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         description: true,
         created_at: true,
         updated_at: true,
-        images: {
+        steps: {
           select: {
-            image_url: true, // Only select the `image_url` field from `images`
+            image_url: true,
           },
-        },
-      },
+      },}
     });
 
     // Convert BigInt IDs to strings and ensure `images` is an array of strings
@@ -26,8 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       id: manual.id.toString(),
       created_at: manual.created_at.toISOString(),
       updated_at: manual.updated_at.toISOString(),
-      images: manual.images
-        .map((image) => image.image_url) // Extract `image_url` as string
+      images: manual.steps.map((step) => step.image_url) // Map `steps` to get `image_url`
         .filter((url) => url.startsWith("http://") || url.startsWith("https://")), // Only include valid URLs
     }));
 
