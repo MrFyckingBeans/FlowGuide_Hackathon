@@ -10,6 +10,7 @@ import { Manual, Report } from "@/types"
 import Logo from "@/components/logo";
 import CreateManualButton from "@/components/createManualButton";
 
+
 export default function Page() {
   const [manuals, setManuals] = useState<Manual[] | null>(null); // Set null initially
   const [error, setError] = useState<string | null>(null)
