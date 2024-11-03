@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+
+// 1. Manuals Table
+model Manual {
+  id         BigInt       @id @default(autoincrement())
+  title      String
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  description String      @default("no description")
+
+  steps      ManualStep[]
+  feedback   ManualFeedback[]
+}
+
+
+// 3. Manual_Steps Table
+model ManualStep {
+  id          BigInt      @id @default(autoincrement())
+  step_number Int
+  title      String
+  description String
+  manual_id   BigInt
+  image_url String
+
+  manual      Manual      @relation(fields: [manual_id], references: [id], onDelete: Cascade)
+  feedback    ManualFeedback[] // Relation with ManualFeedback
+}
+
+// 4. Manual_Feedback Table
+model ManualFeedback {
+  id           BigInt      @id @default(autoincrement())
+  manual_id    BigInt
+  manualStepId BigInt      // New field to reference ManualStep
+  image_url    String?
+  created_at   DateTime     @default(now())
+
+  manual       Manual       @relation(fields: [manual_id], references: [id], onDelete: Cascade)
+  manualStep   ManualStep   @relation(fields: [manualStepId], references: [id], onDelete: Cascade) // Relation with ManualStep
+}

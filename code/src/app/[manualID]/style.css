@@ -1,0 +1,41 @@
+/* Tailwind-inspired font sizes and styling
+
+h1 {
+    font-size: 2.25rem; 
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: 1.875rem; 
+    margin-bottom: 1rem;
+}
+
+h3 {
+    font-size: 1.125rem; 
+    margin-bottom: 1rem;
+}
+
+p {
+    font-size: 1rem; 
+}
+
+ol, ul {
+    padding-left: 1rem;
+    font-size: 1rem; 
+}
+
+li {
+    margin-left: 1rem;
+}
+
+strong {
+    font-weight: 600; 
+}
+
+em {
+    font-style: italic; 
+}
+
+u {
+    text-decoration: underline; 
+} */
