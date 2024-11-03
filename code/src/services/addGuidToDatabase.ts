@@ -28,7 +28,7 @@ export const addGuidToDatabase = async (
 
 
 
-const addStepToDatabase = async (
+export const addStepToDatabase = async (
     manualId: bigint,
     stepNumber: number,
     step: { title: string; description: string; url: string }

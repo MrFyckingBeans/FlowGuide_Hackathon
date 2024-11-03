@@ -22,8 +22,6 @@
     "clsx": "^2.1.1",
     "framer-motion": "^10.13.1",
     "@shadcn/ui": "^0.0.4",
-    "@supabase/supabase-js": "^2.46.1",
-    "ai": "^3.4.31",
     "dotenv": "^16.4.5",
     "framer": "^2.4.1",
     "lucide-react": "^0.454.0",

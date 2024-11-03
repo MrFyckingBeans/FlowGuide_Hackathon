@@ -1,33 +1,42 @@
 import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { fetchManualWithSteps } from "@/services/manualService";
 import { Step } from "@/types";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 export const pushImageToBucket = async (file: File) => {
     const { name, lastModified } = file;
-    const { data, error } = await supabase.storage
+    const uploadResult = await supabase.storage // Simplified to `uploadResult` to avoid unused vars
         .from("feedback_images")
         .upload(`${lastModified}_${name}`, file, {
             cacheControl: "3600",
             upsert: true,
             contentType: "image/*",
-        })
+        });
+
+    if (uploadResult.error) {
+        console.error("Error uploading image:", uploadResult.error);
+        return null;
+    }
 
     const url = supabase.storage.from("feedback_images").getPublicUrl(`${lastModified}_${name}`).data.publicUrl;
-
     return url;
-}
+};
 
-const getGuideText = async (manualID: string) => {
-    const manual = await fetchManualWithSteps(manualID)
-    return manual?.steps.map((step: Step) => step.description).join("\n")
-}
+const getGuideText = async (manualID: string): Promise<string | undefined> => {
+    const manual = await fetchManualWithSteps(manualID);
+
+    // Convert bigint to number or cast as `Step` to match the `Step` type
+    return manual?.steps.map(step => ({
+        ...step,
+        id: Number(step.id),
+    })).map((step: Step) => step.description).join("\n");
+};
+
 
 export const generateTextFromImage = async (url: string, manualID: string) => {
     const guideText = await getGuideText(manualID)

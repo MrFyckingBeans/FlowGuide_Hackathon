@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import RichTextEditor from "./RichTextEditor"
 import { ChevronLeft } from "lucide-react"
@@ -25,7 +25,6 @@ export default function Edit({
   changeStep,
 }: UserGuideViewProps) {
   const searchParams = useSearchParams()
-  const pathname = usePathname()
   const router = useRouter()
   const totalSteps = steps.length
 
