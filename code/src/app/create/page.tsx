@@ -97,17 +97,17 @@ export default function Component() {
     };
 
     return (
-        <div className="min-h-screen bg-background">
-            <div className="container max-w-md px-4 py-6">
-                <h1 className="text-3xl font-bold tracking-tight">
-                    Manual 116 <span className="text-muted-foreground">(Draft)</span>
+        <div className="min-h-screen bg-background flex">
+            <div className="container max-w-md px-4 py-6 mx-auto">
+                <h1 className="text-3xl font-bold tracking-tight text-center">
+                    Manual<span className="text-muted-foreground"></span>
                 </h1>
 
                 {step === 0 && (
                     <div className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="device-name">Enter the name of the device*</Label>
+                                <Label htmlFor="device-name">Name of the Manual</Label>
                                 <Input
                                     id="device-name"
                                     placeholder="Enter device name..."
@@ -119,10 +119,10 @@ export default function Component() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Enter a short description*</Label>
+                                <Label htmlFor="description">Enter a short description</Label>
                                 <Input
                                     id="description"
-                                    placeholder="Enter description..."
+                                    placeholder="description..."
                                     className="h-14 bg-gray-100 w-full border border-grey rounded-lg pl-2"
                                     value={description} // Bind state value
                                     onChange={(e) => setDescription(e.target.value)} // Update state on change
@@ -187,7 +187,7 @@ export default function Component() {
 
                 {step === 1 && (
                     <div className="space-y-6">
-                        <h2 className="text-xl font-bold">Drag each picture to match the process</h2>
+                        <h2 className="text-xl font-bold text-center">Drag each picture to match the process</h2>
                         <Reorder.Group axis="y" values={images} onReorder={setImages}>
                             {images.map((image, index) => (
                                 <Reorder.Item
@@ -226,10 +226,11 @@ export default function Component() {
                     className="fixed bottom-0 left-0 right-0 p-4
                     bg-white shadow-lg"
                 >
-                    <div className="container max-w-md flex justify-between gap-4">
+                    <div className="container max-w-md flex justify-between gap-4 mx-auto">
                         <Button
                             onClick={() => setStep(Math.max(step - 1, 0))}
                             className="h-10 w-1/2 border border-blue-500 text-blue-500 rounded-lg bg-white"
+                            disabled={step === 0}
                         >
                             Back
                         </Button>
