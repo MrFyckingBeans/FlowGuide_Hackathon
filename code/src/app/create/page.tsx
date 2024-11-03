@@ -85,7 +85,7 @@ export default function Component() {
                 const data = await response.json();
                 console.log("Generated guide:", data);
 
-                // router.push("/");
+                router.push("/");
             } else {
                 console.error("Error generating guide:", response.statusText);
             }
